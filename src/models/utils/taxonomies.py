@@ -117,7 +117,7 @@ class MainActivity(str, Enum):
 
 
 # ==========================================
-# Social Context Taxonomies
+# Social and Contextual Taxonomies
 # ==========================================
 
 class SocialContext(str, Enum):
@@ -133,7 +133,7 @@ class SocialContext(str, Enum):
     UNDEFINED = "undefined"
 
 
-class PostIntention(str, Enum):
+class ContentIntention(str, Enum):
     MEMORY_NOSTALGIA = "memory_nostalgia"
     FLEXING_ACHIEVEMENT = "flexing_achievement"
     AESTHETIC_VIBE = "aesthetic_vibe"
@@ -148,7 +148,7 @@ class PostIntention(str, Enum):
 
 
 # ==========================================
-# Mood and Fashion Taxonomies
+# Emotional and Stylistic Taxonomies
 # ==========================================
 
 class Mood(str, Enum):
