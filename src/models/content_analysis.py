@@ -36,5 +36,5 @@ class ContentAnalysis(SQLModel, table=True):
 
     # Relationships
     # One-to-one relationship with Content
-    content_id: int = Field(foreign_key="content.id", unique=True)
-    content: "Content" = Relationship(back_populates="analysis")
+    content_id: int = Field(foreign_key="contents.id", unique=True)
+    content: "Content" = Relationship(back_populates="content_analysis")

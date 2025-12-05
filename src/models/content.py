@@ -38,4 +38,4 @@ class Content(SQLModel, table=True):
     story: Optional["Story"] = Relationship(back_populates="contents")
 
     # One-to-one relationship with ContentAnalysis
-    analysis: Optional["ContentAnalysis"] = Relationship(back_populates="content")
+    content_analysis: Optional["ContentAnalysis"] = Relationship(back_populates="content")
