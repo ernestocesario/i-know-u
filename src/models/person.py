@@ -11,10 +11,11 @@ class Person(SQLModel, table=True):
     
     id: str = Field(primary_key=True, index=True)
     username: str = Field(unique=True, index=True)
+    full_name: str = Field(index=True)
+    bio: Optional[str] = Field(default=None)
     n_followers: int = Field(default=0)
     n_following: int = Field(default=0)
     n_posts: int = Field(default=0)
-    bio: Optional[str] = Field(default=None)
 
 
 
