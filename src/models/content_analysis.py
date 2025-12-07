@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, TYPE_CHECKING
 from datetime import date
 from sqlmodel import SQLModel, Field, Relationship
@@ -37,4 +39,4 @@ class ContentAnalysis(SQLModel, table=True):
     # Relationships
     # One-to-one relationship with Content
     content_id: int = Field(foreign_key="contents.id", unique=True)
-    content: "Content" = Relationship(back_populates="content_analysis")
+    content: Content = Relationship(back_populates="content_analysis")

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, TYPE_CHECKING
 from datetime import date
 from sqlmodel import SQLModel, Field, Relationship
@@ -23,10 +25,10 @@ class Post(SQLModel, table=True):
     # Relationships
     # Many-to-one relationship with Person
     owner_id: str = Field(foreign_key="persons.id")
-    owner: "Person" = Relationship(back_populates="posts")
+    owner: Person = Relationship(back_populates="posts")
 
     # One-to-many relationship with Content
-    contents: list["Content"] = Relationship(back_populates="post")
+    contents: list[Content] = Relationship(back_populates="post")
 
     # One-to-many relationship with Comment
-    comments: list["Comment"] = Relationship(back_populates="post")
+    comments: list[Comment] = Relationship(back_populates="post")

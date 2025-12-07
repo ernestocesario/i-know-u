@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List, Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -21,10 +23,10 @@ class Person(SQLModel, table=True):
 
     # Relationships
     # One-to-many relationship with Post
-    posts: List["Post"] = Relationship(back_populates="owner")
+    posts: List[Post] = Relationship(back_populates="owner")
 
     # One-to-many relationship with Highlight
-    highlights: List["Highlight"] = Relationship(back_populates="owner")
+    highlights: List[Highlight] = Relationship(back_populates="owner")
 
     # One-to-many relationship with Story
-    stories: List["Story"] = Relationship(back_populates="owner")
+    stories: List[Story] = Relationship(back_populates="owner")

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, TYPE_CHECKING
 from datetime import date
 from sqlmodel import SQLModel, Field, Relationship
@@ -19,4 +21,4 @@ class Comment(SQLModel, table=True):
     # Relationships
     # Many-to-one relationship with Post
     post_id: str = Field(foreign_key="posts.id")
-    post: "Post" = Relationship(back_populates="comments")
+    post: Post = Relationship(back_populates="comments")

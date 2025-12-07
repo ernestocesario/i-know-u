@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, Any, TYPE_CHECKING
 from datetime import date
 
@@ -48,5 +50,5 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
         return statement.where(Story.processed == value)
 
     @staticmethod
-    def _apply_owner(statement: Any, value: "Person") -> Any:
+    def _apply_owner(statement: Any, value: Person) -> Any:
         return statement.where(Story.owner_id == value.id)
