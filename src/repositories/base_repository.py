@@ -22,12 +22,6 @@ class BaseRepository(Generic[T, F], ABC):
         return self.session.get(self.model, id)
 
 
-    def get_all(self) -> List[T]:
-        statement = select(self.model)
-        results = self.session.exec(statement).all()
-        return list(results)
-
-
     def create(self, entity: T) -> T:
         self.session.add(entity)
         self.session.commit()
