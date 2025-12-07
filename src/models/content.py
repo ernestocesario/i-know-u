@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
-from datetime import date
+from datetime import datetime
 from sqlmodel import SQLModel, Field, Relationship
 
 
@@ -17,7 +17,7 @@ class Content(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    publication_date: date = Field()
+    publication_datetime: datetime = Field()
 
     # calculated by AI models
     inferred_text: Optional[str] = Field(default=None)

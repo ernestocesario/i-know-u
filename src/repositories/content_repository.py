@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional, Any, TYPE_CHECKING
-from datetime import date
+from datetime import datetime
 from sqlmodel import col
 
 from .base_repository import BaseRepository
@@ -22,11 +22,11 @@ class ContentRepository(BaseRepository[Content, ContentFilter]):
     # *******************************************************
 
     def _apply_custom_filters(self, statement: Any, filters: ContentFilter) -> Any:
-        if filters.min_publication_date:
-            statement = self._apply_min_publication_date(statement, filters.min_publication_date)
+        if filters.min_publication_datetime:
+            statement = self._apply_min_publication_datetime(statement, filters.min_publication_datetime)
 
-        if filters.max_publication_date:
-            statement = self._apply_max_publication_date(statement, filters.max_publication_date)
+        if filters.max_publication_datetime:
+            statement = self._apply_max_publication_datetime(statement, filters.max_publication_datetime)
 
         if filters.inferred_text_contains:
             statement = self._apply_inferred_text_contains(statement, filters.inferred_text_contains)
@@ -49,12 +49,12 @@ class ContentRepository(BaseRepository[Content, ContentFilter]):
         return statement
 
     @staticmethod
-    def _apply_min_publication_date(statement: Any, value: date) -> Any:
-        return statement.where(Content.publication_date >= value)
+    def _apply_min_publication_datetime(statement: Any, value: datetime) -> Any:
+        return statement.where(Content.publication_datetime >= value)
 
     @staticmethod
-    def _apply_max_publication_date(statement: Any, value: date) -> Any:
-        return statement.where(Content.publication_date <= value)
+    def _apply_max_publication_datetime(statement: Any, value: datetime) -> Any:
+        return statement.where(Content.publication_datetime <= value)
 
     @staticmethod
     def _apply_inferred_text_contains(statement: Any, value: str) -> Any:

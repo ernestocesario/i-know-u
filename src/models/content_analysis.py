@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
-from datetime import date
+
 from sqlmodel import SQLModel, Field, Relationship
 
 from src.models.utils.taxonomies import *

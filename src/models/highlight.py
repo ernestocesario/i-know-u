@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
-from datetime import date
+
 from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
     from .person import Person
-    from .content import Content
 
 
 class Highlight(SQLModel, table=True):

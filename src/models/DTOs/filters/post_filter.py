@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime
 from typing import Optional
 
 from .base_filter import BaseFilter
@@ -8,8 +8,8 @@ from ... import Person
 
 
 class PostFilter(BaseFilter):
-    min_publication_date: Optional[date] = None
-    max_publication_date: Optional[date] = None
+    min_publication_datetime: Optional[datetime] = None
+    max_publication_datetime: Optional[datetime] = None
 
     caption_contains: Optional[str] = None
 

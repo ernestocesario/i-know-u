@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
-from datetime import date
+from datetime import datetime
 from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ class Post(SQLModel, table=True):
     __tablename__ = "posts"
 
     id: str = Field(primary_key=True, index=True)
-    publication_date: date = Field()
+    publication_datetime: datetime = Field()
     caption: Optional[str] = Field(default=None)
     n_likes: int = Field(default=0)
 

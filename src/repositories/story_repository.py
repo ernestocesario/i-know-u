@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional, Any, TYPE_CHECKING
-from datetime import date
+from datetime import datetime
 
 from .base_repository import BaseRepository
 from ..models import Story
@@ -22,11 +22,11 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
     # *******************************************************
 
     def _apply_custom_filters(self, statement: Any, filters: StoryFilter) -> Any:
-        if filters.min_publication_date:
-            statement = self._apply_min_publication_date(statement, filters.min_publication_date)
+        if filters.min_publication_datetime:
+            statement = self._apply_min_publication_datetime(statement, filters.min_publication_datetime)
 
-        if filters.max_publication_date:
-            statement = self._apply_max_publication_date(statement, filters.max_publication_date)
+        if filters.max_publication_datetime:
+            statement = self._apply_max_publication_datetime(statement, filters.max_publication_datetime)
 
         if filters.processed is not None:
             statement = self._apply_processed(statement, filters.processed)
@@ -38,12 +38,12 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
 
 
     @staticmethod
-    def _apply_min_publication_date(statement: Any, value: date) -> Any:
-        return statement.where(Story.publication_date >= value)
+    def _apply_min_publication_datetime(statement: Any, value: datetime) -> Any:
+        return statement.where(Story.publication_datetime >= value)
 
     @staticmethod
-    def _apply_max_publication_date(statement: Any, value: date) -> Any:
-        return statement.where(Story.publication_date <= value)
+    def _apply_max_publication_datetime(statement: Any, value: datetime) -> Any:
+        return statement.where(Story.publication_datetime <= value)
 
     @staticmethod
     def _apply_processed(statement: Any, value: bool) -> Any:

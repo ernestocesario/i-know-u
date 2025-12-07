@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date
+from datetime import datetime
 from typing import Any, TYPE_CHECKING
 
 from sqlmodel import col
@@ -23,11 +23,11 @@ class PostRepository(BaseRepository[Post, PostFilter]):
     # *******************************************************
 
     def _apply_custom_filters(self, statement: Any, filters: PostFilter) -> Any:
-        if filters.min_publication_date:
-            statement = self._apply_min_publication_date(statement, filters.min_publication_date)
+        if filters.min_publication_datetime:
+            statement = self._apply_min_publication_datetime(statement, filters.min_publication_datetime)
 
-        if filters.max_publication_date:
-            statement = self._apply_max_publication_date(statement, filters.max_publication_date)
+        if filters.max_publication_datetime:
+            statement = self._apply_max_publication_datetime(statement, filters.max_publication_datetime)
 
         if filters.caption_contains:
             statement = self._apply_caption_contains(statement, filters.caption_contains)
@@ -48,12 +48,12 @@ class PostRepository(BaseRepository[Post, PostFilter]):
 
 
     @staticmethod
-    def _apply_min_publication_date(statement: Any, value: date) -> Any:
-        return statement.where(Post.publication_date >= value)
+    def _apply_min_publication_datetime(statement: Any, value: datetime) -> Any:
+        return statement.where(Post.publication_datetime >= value)
 
     @staticmethod
-    def _apply_max_publication_date(statement: Any, value: date) -> Any:
-        return statement.where(Post.publication_date <= value)
+    def _apply_max_publication_datetime(statement: Any, value: datetime) -> Any:
+        return statement.where(Post.publication_datetime <= value)
 
     @staticmethod
     def _apply_caption_contains(statement: Any, value: str) -> Any:
