@@ -41,8 +41,8 @@ class PostRepository(BaseRepository[Post, PostFilter]):
         if filters.inference_summary_contains:
             statement = self._apply_inference_summary_contains(statement, filters.inference_summary_contains)
 
-        if filters.owner:
-            statement = self._apply_owner(statement, filters.owner)
+        if filters.owner_is:
+            statement = self._apply_owner_is(statement, filters.owner_is)
 
         return statement
 
@@ -72,5 +72,5 @@ class PostRepository(BaseRepository[Post, PostFilter]):
         return statement.where(col(Post.inference_summary).ilike(f"%{value}%"))
 
     @staticmethod
-    def _apply_owner(statement: Any, value: Person) -> Any:
+    def _apply_owner_is(statement: Any, value: Person) -> Any:
         return statement.where(Post.owner_id == value.id)

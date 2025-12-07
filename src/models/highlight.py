@@ -14,7 +14,6 @@ class Highlight(SQLModel, table=True):
 
     id: str = Field(primary_key=True, index=True)
     title: str = Field()
-    # TODO: add here the last processed content to avoid re-processing
 
     # calculated by AI models
     inference_summary: Optional[str] = Field(default=None)
@@ -27,4 +26,4 @@ class Highlight(SQLModel, table=True):
     owner: Person = Relationship(back_populates="highlights")
 
     # One-to-many relationship with Content
-    contents: list[Content] = Relationship(back_populates="highlight")
+    contents: list[Co8ntent] = Relationship(back_populates="highlight")

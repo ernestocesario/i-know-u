@@ -32,7 +32,7 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
             statement = self._apply_processed(statement, filters.processed)
 
         if filters.owner:
-            statement = self._apply_owner(statement, filters.owner)
+            statement = self._apply_owner_is(statement, filters.owner)
 
         return statement
 
@@ -50,5 +50,5 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
         return statement.where(Story.processed == value)
 
     @staticmethod
-    def _apply_owner(statement: Any, value: Person) -> Any:
+    def _apply_owner_is(statement: Any, value: Person) -> Any:
         return statement.where(Story.owner_id == value.id)

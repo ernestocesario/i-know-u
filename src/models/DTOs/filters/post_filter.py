@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
 from datetime import date
+from typing import Optional
 
 from .base_filter import BaseFilter
-from ... import Post, Person
+from ... import Person
 
 
 class PostFilter(BaseFilter):
@@ -18,4 +18,4 @@ class PostFilter(BaseFilter):
 
     inference_summary_contains: Optional[str] = None
 
-    owner: Optional[Person] = None
+    owner_is: Optional[Person] = None
