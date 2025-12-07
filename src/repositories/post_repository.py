@@ -1,0 +1,76 @@
+from __future__ import annotations
+
+from datetime import date
+from typing import Any, TYPE_CHECKING
+
+from sqlmodel import col
+
+from .base_repository import BaseRepository
+from ..models import Post
+from ..models.DTOs.filters.post_filter import PostFilter
+
+if TYPE_CHECKING:
+    from ..models import Person
+
+
+class PostRepository(BaseRepository[Post, PostFilter]):
+    def __init__(self, session):
+        super().__init__(session, Post)
+
+
+    # *******************************************************
+    # Private methods
+    # *******************************************************
+
+    def _apply_custom_filters(self, statement: Any, filters: PostFilter) -> Any:
+        if filters.min_publication_date:
+            statement = self._apply_min_publication_date(statement, filters.min_publication_date)
+
+        if filters.max_publication_date:
+            statement = self._apply_max_publication_date(statement, filters.max_publication_date)
+
+        if filters.caption_contains:
+            statement = self._apply_caption_contains(statement, filters.caption_contains)
+
+        if filters.min_n_likes is not None:
+            statement = self._apply_min_likes(statement, filters.min_n_likes)
+
+        if filters.max_n_likes is not None:
+            statement = self._apply_max_likes(statement, filters.max_n_likes)
+
+        if filters.inference_summary_contains:
+            statement = self._apply_inference_summary_contains(statement, filters.inference_summary_contains)
+
+        if filters.owner:
+            statement = self._apply_owner(statement, filters.owner)
+
+        return statement
+
+
+    @staticmethod
+    def _apply_min_publication_date(statement: Any, value: date) -> Any:
+        return statement.where(Post.publication_date >= value)
+
+    @staticmethod
+    def _apply_max_publication_date(statement: Any, value: date) -> Any:
+        return statement.where(Post.publication_date <= value)
+
+    @staticmethod
+    def _apply_caption_contains(statement: Any, value: str) -> Any:
+        return statement.where(col(Post.caption).ilike(f"%{value}%"))
+
+    @staticmethod
+    def _apply_min_likes(statement: Any, value: int) -> Any:
+        return statement.where(Post.n_likes >= value)
+
+    @staticmethod
+    def _apply_max_likes(statement: Any, value: int) -> Any:
+        return statement.where(Post.n_likes <= value)
+
+    @staticmethod
+    def _apply_inference_summary_contains(statement: Any, value: str) -> Any:
+        return statement.where(col(Post.inference_summary).ilike(f"%{value}%"))
+
+    @staticmethod
+    def _apply_owner(statement: Any, value: Person) -> Any:
+        return statement.where(Post.owner_id == value.id)
