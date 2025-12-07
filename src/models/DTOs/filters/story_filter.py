@@ -11,4 +11,6 @@ class StoryFilter(BaseFilter):
 
     processed: Optional[bool] = None
 
-    owner: Optional[Person] = None
+
+    # Relationship: many-to-one with Person
+    owner_is: Optional[Person] = None

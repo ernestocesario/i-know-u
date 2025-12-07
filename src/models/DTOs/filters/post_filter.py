@@ -18,4 +18,6 @@ class PostFilter(BaseFilter):
 
     inference_summary_contains: Optional[str] = None
 
+
+    # Relationship: many-to-one with Person
     owner_is: Optional[Person] = None

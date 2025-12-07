@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Any, TYPE_CHECKING
-
 from sqlmodel import col
 
 from .base_repository import BaseRepository

@@ -31,8 +31,8 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
         if filters.processed is not None:
             statement = self._apply_processed(statement, filters.processed)
 
-        if filters.owner:
-            statement = self._apply_owner_is(statement, filters.owner)
+        if filters.owner_is:
+            statement = self._apply_owner_is(statement, filters.owner_is)
 
         return statement
 
