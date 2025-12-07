@@ -71,37 +71,37 @@ class PersonRepository(BaseRepository[Person, PersonFilter]):
 
 
     @staticmethod
-    def _apply_username_contains(self, statement: Any, value: str) -> Any:
+    def _apply_username_contains( statement: Any, value: str) -> Any:
         return statement.where(col(Person.username).ilike(f"%{value}%"))
 
     @staticmethod
-    def _apply_full_name_contains(self, statement: Any, value: str) -> Any:
+    def _apply_full_name_contains(statement: Any, value: str) -> Any:
         return statement.where(col(Person.full_name).ilike(f"%{value}%"))
 
     @staticmethod
-    def _apply_bio_contains(self, statement: Any, value: str) -> Any:
+    def _apply_bio_contains(statement: Any, value: str) -> Any:
         return statement.where(col(Person.bio).ilike(f"%{value}%"))
 
     @staticmethod
-    def _apply_min_followers(self, statement: Any, value: int) -> Any:
+    def _apply_min_followers(statement: Any, value: int) -> Any:
         return statement.where(Person.n_followers >= value)
 
     @staticmethod
-    def _apply_max_followers(self, statement: Any, value: int) -> Any:
+    def _apply_max_followers(statement: Any, value: int) -> Any:
         return statement.where(Person.n_followers <= value)
 
     @staticmethod
-    def _apply_min_following(self, statement: Any, value: int) -> Any:
+    def _apply_min_following(statement: Any, value: int) -> Any:
         return statement.where(Person.n_following >= value)
 
     @staticmethod
-    def _apply_max_following(self, statement: Any, value: int) -> Any:
+    def _apply_max_following(statement: Any, value: int) -> Any:
         return statement.where(Person.n_following <= value)
 
     @staticmethod
-    def _apply_min_posts(self, statement: Any, value: int) -> Any:
+    def _apply_min_posts(statement: Any, value: int) -> Any:
         return statement.where(Person.n_posts >= value)
 
     @staticmethod
-    def _apply_max_posts(self, statement: Any, value: int) -> Any:
+    def _apply_max_posts(statement: Any, value: int) -> Any:
         return statement.where(Person.n_posts <= value)
