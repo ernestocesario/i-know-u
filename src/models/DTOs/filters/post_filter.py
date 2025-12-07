@@ -1,7 +1,5 @@
-from __future__ import annotations
-
-from datetime import datetime
 from typing import Optional
+from datetime import datetime
 
 from .base_filter import BaseFilter
 from ... import Person
