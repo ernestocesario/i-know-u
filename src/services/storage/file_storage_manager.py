@@ -3,7 +3,7 @@ import os
 
 
 class FileStorageManager:
-    def __init__(self, base_root: str = "data/contents"):
+    def __init__(self, base_root: str):
         """
         Manages physical file storage.
         Internal structure: see file_storage_schema.drawio

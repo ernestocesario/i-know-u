@@ -1,7 +1,10 @@
 import os
 from sqlmodel import SQLModel, create_engine, Session
 
-DATA_DIR = "data"
+from src.config.app_properties import AppProperties
+
+DATA_DIR = AppProperties.DATA_DIR
+
 DB_NAME = "iku_database.db"
 DB_URL = f"sqlite:///{DATA_DIR}/{DB_NAME}"
 
