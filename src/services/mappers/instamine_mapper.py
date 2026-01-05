@@ -79,4 +79,5 @@ class InstamineMapper:
         return Content(
             external_id=dto.id,
             publication_datetime=dto.publication_datetime,
+            mime_type=dto.mime_type
         )

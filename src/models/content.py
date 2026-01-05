@@ -20,6 +20,8 @@ class Content(SQLModel, table=True):
 
     publication_datetime: Optional[datetime] = Field(default=None)
 
+    mime_type: str = Field()
+
     # calculated by AI models
     inferred_text: Optional[str] = Field(default=None)
 
