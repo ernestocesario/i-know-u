@@ -10,8 +10,10 @@ if TYPE_CHECKING:
 
 class Person(SQLModel, table=True):
     __tablename__ = "persons"
-    
-    id: str = Field(primary_key=True, index=True)
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    external_id: str = Field(index=True, unique=True)
+
     username: str = Field(unique=True, index=True)
     full_name: str = Field(index=True)
     bio: Optional[str] = Field(default=None)

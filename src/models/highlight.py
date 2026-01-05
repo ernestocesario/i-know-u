@@ -13,7 +13,9 @@ if TYPE_CHECKING:
 class Highlight(SQLModel, table=True):
     __tablename__ = "highlights"
 
-    id: str = Field(primary_key=True, index=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
+    external_id: str = Field(index=True, unique=True)
+
     title: str = Field()
 
     # calculated by AI models

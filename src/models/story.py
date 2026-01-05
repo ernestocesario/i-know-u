@@ -13,6 +13,7 @@ class Story(SQLModel, table=True):
     __tablename__ = "stories"
 
     id: Optional[int] = Field(default=None, primary_key=True)
+    external_id: str = Field(index=True, unique=True)
 
     publication_datetime: datetime = Field()
     processed: bool = Field(default=False)
