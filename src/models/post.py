@@ -26,7 +26,7 @@ class Post(SQLModel, table=True):
 
     # Relationships
     # Many-to-one relationship with Person
-    owner_id: str = Field(foreign_key="persons.id")
+    owner_id: int = Field(foreign_key="persons.id")
     owner: Person = Relationship(back_populates="posts")
 
     # One-to-many relationship with Content

@@ -29,11 +29,11 @@ class Content(SQLModel, table=True):
 
     # Relationships
     # Many-to-one relationship with Post
-    post_id: Optional[str] = Field(foreign_key="posts.id")
+    post_id: Optional[int] = Field(foreign_key="posts.id")
     post: Optional[Post] = Relationship(back_populates="contents")
 
     # Many-to-one relationship with Highlight
-    highlight_id: Optional[str] = Field(foreign_key="highlights.id")
+    highlight_id: Optional[int] = Field(foreign_key="highlights.id")
     highlight: Optional[Highlight] = Relationship(back_populates="contents")
 
     # Many-to-one relationship with Story

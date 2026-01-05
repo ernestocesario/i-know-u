@@ -20,5 +20,5 @@ class Comment(SQLModel, table=True):
 
     # Relationships
     # Many-to-one relationship with Post
-    post_id: str = Field(foreign_key="posts.id")
+    post_id: int = Field(foreign_key="posts.id")
     post: Post = Relationship(back_populates="comments")
