@@ -15,7 +15,7 @@ class Story(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     external_id: str = Field(index=True, unique=True)
 
-    publication_datetime: datetime = Field()
+    publication_datetime: Optional[datetime] = Field(default=None)
     processed: bool = Field(default=False)
 
 

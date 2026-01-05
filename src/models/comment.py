@@ -13,8 +13,8 @@ class Comment(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    publication_datetime: datetime = Field()
-    text: str = Field()
+    publication_datetime: Optional[datetime] = Field(default=None)
+    text: Optional[str] = Field(default=None)
 
 
 

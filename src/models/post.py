@@ -15,9 +15,9 @@ class Post(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     external_id: str = Field(index=True, unique=True)
 
-    publication_datetime: datetime = Field()
+    publication_datetime: Optional[datetime] = Field(default=None)
     caption: Optional[str] = Field(default=None)
-    n_likes: int = Field(default=0)
+    n_likes: Optional[int] = Field(default=None)
 
     # calculated by AI models
     inference_summary: Optional[str] = Field(default=None)
