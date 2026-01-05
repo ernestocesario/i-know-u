@@ -1,5 +1,6 @@
 import os
 import sys
+from pathlib import Path
 
 
 class AppProperties:
@@ -12,7 +13,7 @@ class AppProperties:
     def get_base_dir() -> str:
         if getattr(sys, "frozen", False):
             return os.path.dirname(sys.executable)
-        return os.path.dirname(os.path.abspath(__file__))
+        return str(Path(os.path.dirname(os.path.abspath(__file__))).resolve().parent.parent)
 
 
 
