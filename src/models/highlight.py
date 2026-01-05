@@ -4,7 +4,9 @@ from typing import Optional, TYPE_CHECKING
 
 from sqlmodel import SQLModel, Field, Relationship
 
+
 if TYPE_CHECKING:
+    from . import Content
     from .person import Person
 
 
@@ -25,4 +27,4 @@ class Highlight(SQLModel, table=True):
     owner: Person = Relationship(back_populates="highlights")
 
     # One-to-many relationship with Content
-    contents: list[Co8ntent] = Relationship(back_populates="highlight")
+    contents: list[Content] = Relationship(back_populates="highlight")
