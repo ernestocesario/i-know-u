@@ -29,7 +29,7 @@ class InstamineMapper:
 
 
     @staticmethod
-    def to_post_entity(dto: PostDTO, owner_id: int) -> Post:
+    def to_post_entity(dto: PostDTO, owner: Person) -> Post:
         if not dto.id:
             raise InvalidDTOError("PostDTO must have a valid 'id' to map to Post entity.")
 
@@ -38,13 +38,12 @@ class InstamineMapper:
             publication_datetime=dto.publication_datetime,
             caption=dto.caption,
             n_likes=dto.n_likes,
-
-            owner_id=owner_id
+            owner=owner
         )
 
 
     @staticmethod
-    def to_story_entity(dto: StoryDTO, owner_id: int) -> Story:
+    def to_story_entity(dto: StoryDTO, owner: Person) -> Story:
         if not dto.id:
             raise InvalidDTOError("StoryDTO must have a valid 'id' to map to Story entity.")
 
@@ -52,12 +51,12 @@ class InstamineMapper:
             external_id=dto.id,
             publication_datetime=dto.publication_datetime,
 
-            owner_id=owner_id
+            owner=owner
         )
 
 
     @staticmethod
-    def to_highlight_entity(dto: HighlightDTO, owner_id: int) -> Highlight:
+    def to_highlight_entity(dto: HighlightDTO, owner: Person) -> Highlight:
         if not dto.id:
             raise InvalidDTOError("HighlightDTO must have a valid 'id' to map to Highlight entity.")
 
@@ -65,7 +64,7 @@ class InstamineMapper:
             external_id=dto.id,
             title=dto.title,
 
-            owner_id=owner_id
+            owner=owner
         )
 
     @staticmethod

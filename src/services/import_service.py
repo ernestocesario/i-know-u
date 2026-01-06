@@ -75,7 +75,7 @@ class ImportService:
             # B. Save post
             try:
                 # Map PostDTO to Post entity
-                post_entity = InstamineMapper.to_post_entity(post_dto, owner_id=person.id)
+                post_entity = InstamineMapper.to_post_entity(post_dto, owner=person)
                 self.session.add(post_entity)
 
                 # Process and store each content
