@@ -16,10 +16,10 @@ class PersonRepository(BaseRepository[Person, PersonFilter]):
     # Public methods
     # *******************************************************
 
-    def get_by_full_name(self, full_name: str) -> Optional[Person]:
+    def get_by_external_id(self, external_id: str) -> Optional[Person]:
         statement = (
             select(Person)
-            .where(Person.full_name == full_name)
+            .where(Person.external_id == external_id)
         )
 
         return self.session.exec(statement).first()
@@ -29,6 +29,15 @@ class PersonRepository(BaseRepository[Person, PersonFilter]):
         statement = (
             select(Person)
             .where(Person.username == username)
+        )
+
+        return self.session.exec(statement).first()
+
+
+    def get_by_full_name(self, full_name: str) -> Optional[Person]:
+        statement = (
+            select(Person)
+            .where(Person.full_name == full_name)
         )
 
         return self.session.exec(statement).first()
