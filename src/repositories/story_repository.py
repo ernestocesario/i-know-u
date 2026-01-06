@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import Optional, Any, TYPE_CHECKING
 from datetime import datetime
 
+from sqlmodel import select
+
 from .base_repository import BaseRepository
 from ..models import Story
 from ..models.DTOs.filters.story_filter import StoryFilter
@@ -15,6 +17,20 @@ if TYPE_CHECKING:
 class StoryRepository(BaseRepository[Story, StoryFilter]):
     def __init__(self, session):
         super().__init__(session, Story)
+
+
+    # *******************************************************
+    # Public methods
+    # *******************************************************
+
+    def get_by_external_id(self, external_id: str) -> Optional[Story]:
+        statement = (
+            select(Story)
+            .where(Story.external_id == external_id)
+        )
+
+        return self.session.exec(statement).first()
+
 
 
     # *******************************************************

@@ -8,6 +8,7 @@ from sqlmodel import Session
 from src.config.app_properties import AppProperties
 from src.repositories.person_repository import PersonRepository
 from src.repositories.post_repository import PostRepository
+from src.repositories.story_repository import StoryRepository
 from src.services.mappers.instamine_mapper import InstamineMapper
 from src.services.storage.file_storage_manager import FileStorageManager
 
@@ -23,6 +24,7 @@ class ImportService:
 
         self.person_repository = PersonRepository(session)
         self.post_repository = PostRepository(session)
+        self.story_repository = StoryRepository(session)
 
 
     def import_profile_metadata(self, target_username: str) -> None:
@@ -108,5 +110,63 @@ class ImportService:
 
             except Exception as e:
                 self.logger.error(f"Failed to import post '{post_dto.id}': {e}")
+                self.session.rollback()
+                continue
+
+
+    def import_stories(self, target_username: str, limit: int) -> None:
+        person = self.person_repository.get_by_username(username=target_username)
+
+        # 1. Verify that the person exists in the database
+        if not person:
+            self.logger.error(f"Person with username '{target_username}' not found in the database.")
+            raise ValueError(f"Person with username '{target_username}' not found in the database.")
+
+        # 2. Fetch stories from Instamine
+        try:
+            story_dtos = self.instamine.get_stories(username=target_username, limit=limit)
+        except Exception as e:
+            self.logger.error(f"Failed to fetch stories for '{target_username}': {e}")
+            raise e
+
+        # 3. Process and store each story
+        for story_dto in story_dtos:
+            # A. Check if the story already exists
+            existing_story = self.story_repository.get_by_external_id(story_dto.id)
+            if existing_story:
+                continue
+
+            # B. Save story
+            try:
+                # Map StoryDTO to Story entity
+                story_entity = InstamineMapper.to_story_entity(story_dto, owner=person)
+                self.session.add(story_entity)
+
+                # Process and store the content
+                content_dto = story_dto.content
+
+                if not content_dto or not content_dto.size > 0:
+                    raise ValueError(f"Story '{story_dto.id}' has no valid content to import.")
+
+                # Map ContentDTO to Content entity
+                content_entity = InstamineMapper.to_content_entity(content_dto)
+
+                # Link content to story
+                content_entity.story = story_entity
+
+                # Save content file
+                content_data = content_dto.read()
+
+                self.file_manager.save_story_media(
+                    username=target_username,
+                    story_id=story_entity.external_id,
+                    data=content_data,
+                    mime_type=content_dto.mime_type
+                )
+
+                self.session.add(content_entity)
+                self.session.commit()
+            except Exception as e:
+                self.logger.error(f"Failed to import story '{story_dto.id}': {e}")
                 self.session.rollback()
                 continue
