@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Optional
 
-from sqlmodel import col
+from sqlmodel import col, select
 
 from .base_repository import BaseRepository
 from ..models import Post
@@ -16,6 +16,19 @@ if TYPE_CHECKING:
 class PostRepository(BaseRepository[Post, PostFilter]):
     def __init__(self, session):
         super().__init__(session, Post)
+
+
+    # *******************************************************
+    # Public methods
+    # *******************************************************
+
+    def get_by_external_id(self, external_id: str) -> Optional[Post]:
+        statement = (
+            select(Post)
+            .where(Post.external_id == external_id)
+        )
+
+        return self.session.exec(statement).first()
 
 
     # *******************************************************
