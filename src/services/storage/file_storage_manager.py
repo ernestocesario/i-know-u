@@ -143,3 +143,4 @@ class FileStorageManager:
                 shutil.rmtree(path)
             except Exception as e:
                 self.logger.error(f"Failed to delete folder at {path}: {str(e)}")
+                raise IOError(f"Failed to delete folder at {path}: {str(e)}")
