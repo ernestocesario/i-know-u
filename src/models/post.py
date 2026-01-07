@@ -30,7 +30,13 @@ class Post(SQLModel, table=True):
     owner: Person = Relationship(back_populates="posts")
 
     # One-to-many relationship with Content
-    contents: list[Content] = Relationship(back_populates="post")
+    contents: list[Content] = Relationship(
+        back_populates="post",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
     # One-to-many relationship with Comment
-    comments: list[Comment] = Relationship(back_populates="post")
+    comments: list[Comment] = Relationship(
+        back_populates="post",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )

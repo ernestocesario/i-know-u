@@ -25,10 +25,19 @@ class Person(SQLModel, table=True):
 
     # Relationships
     # One-to-many relationship with Post
-    posts: List[Post] = Relationship(back_populates="owner")
+    posts: List[Post] = Relationship(
+        back_populates="owner",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
     # One-to-many relationship with Highlight
-    highlights: List[Highlight] = Relationship(back_populates="owner")
+    highlights: List[Highlight] = Relationship(
+        back_populates="owner",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
     # One-to-many relationship with Story
-    stories: List[Story] = Relationship(back_populates="owner")
+    stories: List[Story] = Relationship(
+        back_populates="owner",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )

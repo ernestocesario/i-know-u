@@ -29,4 +29,7 @@ class Highlight(SQLModel, table=True):
     owner: Person = Relationship(back_populates="highlights")
 
     # One-to-many relationship with Content
-    contents: list[Content] = Relationship(back_populates="highlight")
+    contents: list[Content] = Relationship(
+        back_populates="highlight",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )

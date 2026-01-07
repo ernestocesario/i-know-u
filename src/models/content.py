@@ -43,4 +43,7 @@ class Content(SQLModel, table=True):
     story: Optional[Story] = Relationship(back_populates="contents")
 
     # One-to-one relationship with ContentAnalysis
-    content_analysis: Optional[ContentAnalysis] = Relationship(back_populates="content")
+    content_analysis: Optional[ContentAnalysis] = Relationship(
+        back_populates="content",
+        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
