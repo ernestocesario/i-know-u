@@ -1,5 +1,7 @@
+import logging
 import mimetypes
 import os
+import shutil
 
 
 class FileStorageManager:
@@ -11,6 +13,8 @@ class FileStorageManager:
 
         self.base_root = base_root
 
+        self.logger = logging.getLogger(__name__)
+
 
     # *******************************************************
     # Public methods
@@ -18,7 +22,7 @@ class FileStorageManager:
 
     def save_post_media(
         self,
-        username: str,
+        user_id: str,
         post_id: str,
         content_id: str,
         data: bytes,
@@ -27,13 +31,13 @@ class FileStorageManager:
         """
         Saves media for a post.
         """
-        path = os.path.join(self.base_root, username, "Posts", post_id)
+        path = os.path.join(self.base_root, user_id, "Posts", post_id)
         self._save_file(path, content_id, data, mime_type)
 
 
     def save_story_media(
         self,
-        username: str,
+        user_id: str,
         story_id: str,
         data: bytes,
         mime_type: str,
@@ -42,13 +46,13 @@ class FileStorageManager:
         Saves media for a story.
         NOTE: The file name is the story ID (not the content ID)
         """
-        path = os.path.join(self.base_root, username, "Stories")
+        path = os.path.join(self.base_root, user_id, "Stories")
         self._save_file(path, story_id, data, mime_type)
 
 
     def save_highlight_media(
         self,
-        username: str,
+        user_id: str,
         highlight_id: str,
         content_id: str,
         data: bytes,
@@ -57,9 +61,28 @@ class FileStorageManager:
         """
         Saves media for a highlight.
         """
-        path = os.path.join(self.base_root, username, "Highlights", highlight_id)
+        path = os.path.join(self.base_root, user_id, "Highlights", highlight_id)
         self._save_file(path, content_id, data, mime_type)
 
+
+    def delete_user_folder(self, user_id: str):
+        user_path = os.path.join(self.base_root, user_id)
+        self._delete_folder_recursively(user_path)
+
+
+    def delete_posts_folder(self, user_id: str):
+        posts_path = os.path.join(self.base_root, user_id, "Posts")
+        self._delete_folder_recursively(posts_path)
+
+
+    def delete_stories_folder(self, user_id: str):
+        stories_path = os.path.join(self.base_root, user_id, "Stories")
+        self._delete_folder_recursively(stories_path)
+
+
+    def delete_highlights_folder(self, user_id: str):
+        highlights_path = os.path.join(self.base_root, user_id, "Highlights")
+        self._delete_folder_recursively(highlights_path)
 
 
     # *******************************************************
@@ -112,3 +135,11 @@ class FileStorageManager:
             return full_path
         except Exception as e:
             raise IOError(f"Failed to save file at {full_path}: {str(e)}")
+
+
+    def _delete_folder_recursively(self, path: str):
+        if os.path.exists(path):
+            try:
+                shutil.rmtree(path)
+            except Exception as e:
+                self.logger.error(f"Failed to delete folder at {path}: {str(e)}")

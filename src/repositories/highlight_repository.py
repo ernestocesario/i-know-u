@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, TYPE_CHECKING
-from sqlmodel import col
+from typing import Any, TYPE_CHECKING, Optional
+from sqlmodel import col, select
 
 from .base_repository import BaseRepository
 from ..models import Highlight
@@ -14,6 +14,19 @@ if TYPE_CHECKING:
 class HighlightRepository(BaseRepository[Highlight, HighlightFilter]):
     def __init__(self, session):
         super().__init__(session, Highlight)
+
+
+    # *******************************************************
+    # Public methods
+    # *******************************************************
+
+    def get_by_external_id(self, external_id: str) -> Optional[Highlight]:
+        statement = (
+            select(Highlight)
+            .where(Highlight.external_id == external_id)
+        )
+
+        return self.session.exec(statement).first()
 
 
     # *******************************************************

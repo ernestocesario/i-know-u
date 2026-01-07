@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional, Any, TYPE_CHECKING
 from datetime import datetime
-from sqlmodel import col
+from sqlmodel import col, select
 
 from .base_repository import BaseRepository
 from ..models import Content
@@ -15,6 +15,19 @@ if TYPE_CHECKING:
 class ContentRepository(BaseRepository[Content, ContentFilter]):
     def __init__(self, session):
         super().__init__(session, Content)
+
+
+    # *******************************************************
+    # Public methods
+    # *******************************************************
+
+    def get_by_external_id(self, external_id: str) -> Optional[Content]:
+        statement = (
+            select(Highlight)
+            .where(Content.external_id == external_id)
+        )
+
+        return self.session.exec(statement).first()
 
 
     # *******************************************************
