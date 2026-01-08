@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 from typing import List
 
 from google import genai
@@ -119,6 +120,10 @@ class GemmaProvider(BaseAIProvider):
         """
 
         google_file = self.client.files.upload(file=file_path, config=types.UploadFileConfig(mime_type=mime_type))
+
+        while google_file.state == types.FileState.PROCESSING:
+            time.sleep(1)
+            google_file = self.client.files.get(name=google_file.name)
 
         if google_file.state.name != types.FileState.ACTIVE:
             raise ValueError(f"Google file upload failed: {google_file.error.message}")
