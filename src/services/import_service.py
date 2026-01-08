@@ -13,6 +13,7 @@ from src.repositories.person_repository import PersonRepository
 from src.repositories.post_repository import PostRepository
 from src.repositories.story_repository import StoryRepository
 from src.services.mappers.instamine_mapper import InstamineMapper
+from src.services.removal_service import RemovalService
 from src.services.storage.file_storage_manager import FileStorageManager
 
 
@@ -24,6 +25,7 @@ class ImportService:
         self.logger = logging.getLogger(__name__)
 
         self.file_manager = FileStorageManager(base_root=AppProperties.CONTENTS_DIR)
+        self.removal_service = RemovalService(session)
 
         self.person_repository = PersonRepository(session)
         self.post_repository = PostRepository(session)
@@ -185,7 +187,7 @@ class ImportService:
             raise e
 
 
-    def import_highlights(self, target_username: str, limit: int, highlight_titles: Optional[List[str]] = None) -> None:
+    def import_highlights(self, target_username: str, limit: int) -> None:
         person = self.person_repository.get_by_username(username=target_username)
 
         # 1. Verify that the person exists in the database
@@ -193,11 +195,15 @@ class ImportService:
             self.logger.error(f"Person with username '{target_username}' not found in the database.")
             raise ValueError(f"Person with username '{target_username}' not found in the database.")
 
-        # 2. Check highlight titles
-        if not highlight_titles:
-            highlight_titles = self.get_highlights_titles(target_username=target_username)
+        # 2. Fetch highlight titles
+        highlight_titles = self.get_highlights_titles(target_username=target_username)
 
-        # 3. Fetch highlights from Instamine
+        # 3. Remove all existing highlights for the user, before importing new ones, because the current Instamine provider
+        #    returns different highlight ID if the highlight is updated, causing duplicates.
+        self.removal_service.remove_all_highlights(username=target_username)
+
+
+        # 4. Fetch highlights from Instamine
         for title in highlight_titles:
             try:
                 # A. Fetch highlight using its title
