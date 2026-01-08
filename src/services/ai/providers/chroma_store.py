@@ -7,6 +7,8 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from pydantic import SecretStr
 
 from src.config.app_properties import AppProperties
+from src.models.DTOs.vector_document_dto import VectorDocumentDTO
+from src.models.utils.VectorObjectType import VectorObjectType
 from src.services.ai.interfaces.base_vector_store import BaseVectorStore
 
 
@@ -32,23 +34,22 @@ class ChromaVectorStore(BaseVectorStore):
         )
 
 
-    def add_documents(self, texts: List[str], metadatas: List[Dict[str, Any]]) -> None:
+    def add_documents(self, document: VectorDocumentDTO) -> None:
         """
         Embeds and saves textual documents into the vector store.
         """
-        if not texts:
-            self.logger.warning("No texts provided to add to the vector store.")
+        if not document.text or not document.text.strip():
+            self.logger.warning("Empty document text provided; skipping addition to vector store.")
             return
 
         try:
-            documents = [
-                Document(page_content=text, metadata=meta) for text, meta in zip(texts, metadatas)
-            ]
+            metadata = document.to_chroma_metadata()
+            doc = Document(page_content=document.text, metadata=metadata)
 
-            self.vector_store.add_documents(documents)
+            self.vector_store.add_documents([doc])
 
         except Exception as e:
-            self.logger.error(f"Error adding documents to vector store: {e}")
+            self.logger.error(f"Error adding document to vector store: {e}")
             raise e
 
 
@@ -57,26 +58,35 @@ class ChromaVectorStore(BaseVectorStore):
         Performs a semantic search on the vector store.
         """
         try:
-            results = self.vector_store.similarity_search(
-                query=query,
-                filter=filters,
-                k=k,
-            )
+            results = self.vector_store.search(query=query, filters=filters, k=k)
 
             return [doc.page_content for doc in results]
 
         except Exception as e:
-            self.logger.error(f"Error searching vector store: {e}")
+            self.logger.error(f"Error during vector search with query '{query}': {e}")
             raise e
 
 
-    def delete_contents(self, owner_id: str):
-        """
-        Removes vectors associated with a specific owner.
-        """
+    def delete(self, person_id: int, object_type: Optional[VectorObjectType] = None) -> None:
         try:
-            self.vector_store.delete(where={"owner_id": owner_id})
+            where_filter: Dict[str, Any] = {"person_id": person_id}
+
+            if object_type:
+                where_filter["object_type"] = object_type.value
+
+            self.vector_store.delete(where=where_filter)
 
         except Exception as e:
-            self.logger.error(f"Error deleting contents for owner_id '{owner_id}': {e}")
+            self.logger.error(f"Error deleting vectors for person_id '{person_id}' and object_type '{object_type}': {e}")
+            raise e
+
+
+    def clear_store(self) -> None:
+        """
+        Clears the entire vector store.
+        """
+        try:
+            self.vector_store.delete(where={})
+        except Exception as e:
+            self.logger.error(f"Error clearing the vector store: {e}")
             raise e

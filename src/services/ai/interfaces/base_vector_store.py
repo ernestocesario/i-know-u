@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 
+from src.models.DTOs.vector_document_dto import VectorDocumentDTO
+from src.models.utils.VectorObjectType import VectorObjectType
+
 
 class BaseVectorStore(ABC):
     """
@@ -8,34 +11,33 @@ class BaseVectorStore(ABC):
     """
 
     @abstractmethod
-    def add_documents(self, texts: List[str], metadatas: List[Dict[str, Any]]) -> None:
+    def add_documents(self, document: VectorDocumentDTO) -> None:
         """
         Embeds and saves textual documents into the vector store.
-
-        Args:
-            texts: List of strings (descriptions) to embed.
-            metadatas: List of dictionaries containing metadata (e.g., {'owner_id': '123'}).
         """
         pass
+
 
     @abstractmethod
     def search(self, query: str, filters: Optional[Dict[str, Any]] = None, k: int = 5) -> List[str]:
         """
         Performs a semantic search on the vector store.
-
-        Args:
-            query: The user's question.
-            filters: Optional filters (e.g., search only specific user).
-            k: Number of results to return.
-
-        Returns:
-            List[str]: List of relevant text snippets (context).
         """
         pass
 
+
     @abstractmethod
-    def delete_collection(self, owner_id: str) -> None:
+    def delete(self, person_id: int, object_type: Optional[VectorObjectType] = None) -> None:
         """
-        Removes vectors associated with a specific owner.
+        Removes all vectors of a specific type associated with a specific person.
+        If object_type is None, removes all vectors for the person.
+        """
+        pass
+
+
+    @abstractmethod
+    def clear_store(self) -> None:
+        """
+        Clears the entire vector store.
         """
         pass
