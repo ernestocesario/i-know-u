@@ -21,6 +21,14 @@ class AppProperties:
     # Constants methods
     # *******************************************************
 
+    # Base directory of the application
     BASE_DIR: str = get_base_dir()
+
+    # Directory to store application data
     DATA_DIR: str = os.path.join(BASE_DIR, "data")
+
+    # Directory to store content files
     CONTENTS_DIR: str = os.path.join(DATA_DIR, "contents")
+
+    # Directory to store vector data
+    VECTOR_STORE_DIR = os.path.join("data", "vector_store")
