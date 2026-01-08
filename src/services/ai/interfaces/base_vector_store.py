@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 
+from src.models.DTOs.filters.vector_db.vector_filter import VectorFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO
-from src.models.utils.VectorObjectType import VectorObjectType
+from src.models.utils.vector_object_type import VectorObjectType
 
 
 class BaseVectorStore(ABC):
@@ -19,7 +20,7 @@ class BaseVectorStore(ABC):
 
 
     @abstractmethod
-    def search(self, query: str, filters: Optional[Dict[str, Any]] = None, k: int = 5) -> List[str]:
+    def search(self, query: str, filters: Optional[VectorFilter], k: int = 5) -> List[str]:
         """
         Performs a semantic search on the vector store.
         """

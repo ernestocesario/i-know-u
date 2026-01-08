@@ -3,7 +3,8 @@ from typing import Optional, Dict, Any
 from pydantic import BaseModel
 
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
-from src.models.utils.VectorObjectType import VectorObjectType
+from src.models.utils.vector_object_type import VectorObjectType
+from src.models.utils.vector_metadata_keys import VectorMetadataKeys
 
 
 class VectorDocumentDTO(BaseModel):
@@ -25,14 +26,14 @@ class VectorDocumentDTO(BaseModel):
 
         # 1. Base metadata
         metadata = {
-            "person_id": self.person_id,
-            "object_id": self.object_id,
-            "object_type": self.object_type.value,
+            VectorMetadataKeys.PERSON_ID: self.person_id,
+            VectorMetadataKeys.OBJECT_ID: self.object_id,
+            VectorMetadataKeys.OBJECT_TYPE: self.object_type.value,
         }
 
         # 2. Add mime_type if present
         if self.mime_type:
-            metadata["mime_type"] = self.mime_type
+            metadata[VectorMetadataKeys.MIME_TYPE] = self.mime_type
 
         # 3. Flatten content analysis if present
         if self.content_analysis:

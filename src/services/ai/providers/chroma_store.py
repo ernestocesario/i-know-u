@@ -7,8 +7,10 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from pydantic import SecretStr
 
 from src.config.app_properties import AppProperties
+from src.models.DTOs.filters.vector_db.vector_filter import VectorFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO
-from src.models.utils.VectorObjectType import VectorObjectType
+from src.models.utils.vector_object_type import VectorObjectType
+from src.models.utils.vector_metadata_keys import VectorMetadataKeys
 from src.services.ai.interfaces.base_vector_store import BaseVectorStore
 
 
@@ -53,12 +55,16 @@ class ChromaVectorStore(BaseVectorStore):
             raise e
 
 
-    def search(self, query: str, filters: Optional[Dict[str, Any]] = None, k: int = 5) -> List[str]:
+    def search(self, query: str, filters: Optional[VectorFilter], k: int = 5) -> List[str]:
         """
         Performs a semantic search on the vector store.
         """
         try:
-            results = self.vector_store.search(query=query, filters=filters, k=k)
+            results = self.vector_store.similarity_search(
+                query=query,
+                filters=filters.build_filter(),
+                k=k,
+            )
 
             return [doc.page_content for doc in results]
 
@@ -69,15 +75,15 @@ class ChromaVectorStore(BaseVectorStore):
 
     def delete(self, person_id: int, object_type: Optional[VectorObjectType] = None) -> None:
         try:
-            where_filter: Dict[str, Any] = {"person_id": person_id}
+            where_filter: Dict[str, Any] = {VectorMetadataKeys.PERSON_ID: person_id}
 
             if object_type:
-                where_filter["object_type"] = object_type.value
+                where_filter[VectorMetadataKeys.OBJECT_TYPE] = object_type.value
 
             self.vector_store.delete(where=where_filter)
 
         except Exception as e:
-            self.logger.error(f"Error deleting vectors for person_id '{person_id}' and object_type '{object_type}': {e}")
+            self.logger.error(f"Error deleting vectors for {VectorMetadataKeys.PERSON_ID} '{person_id}' and {VectorMetadataKeys.OBJECT_TYPE} '{object_type}': {e}")
             raise e
 
 
