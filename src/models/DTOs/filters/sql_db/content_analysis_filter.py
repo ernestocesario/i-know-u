@@ -1,8 +1,8 @@
 from typing import Optional
 
 from .base_filter import BaseFilter
-from ... import ContentAnalysis, Content
-from ...utils.taxonomies import *
+from src.models import ContentAnalysis, Content
+from src.models.utils.taxonomies import *
 
 
 class ContentAnalysisFilter(BaseFilter):

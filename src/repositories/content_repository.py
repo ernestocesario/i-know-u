@@ -6,7 +6,7 @@ from sqlmodel import col, select
 
 from .base_repository import BaseRepository
 from ..models import Content
-from ..models.DTOs.filters.content_filter import ContentFilter
+from src.models.DTOs.filters.sql_db.content_filter import ContentFilter
 
 if TYPE_CHECKING:
     from ..models import Post, Highlight, Story, ContentAnalysis

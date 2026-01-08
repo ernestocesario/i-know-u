@@ -6,9 +6,9 @@ from sqlmodel import Session
 
 from src.config.app_properties import AppProperties
 from src.models import Person
-from src.models.DTOs.filters.highlight_filter import HighlightFilter
-from src.models.DTOs.filters.post_filter import PostFilter
-from src.models.DTOs.filters.story_filter import StoryFilter
+from src.models.DTOs.filters.sql_db.highlight_filter import HighlightFilter
+from src.models.DTOs.filters.sql_db.post_filter import PostFilter
+from src.models.DTOs.filters.sql_db.story_filter import StoryFilter
 from src.repositories.highlight_repository import HighlightRepository
 from src.repositories.person_repository import PersonRepository
 from src.repositories.post_repository import PostRepository

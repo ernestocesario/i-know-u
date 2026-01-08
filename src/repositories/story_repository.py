@@ -7,7 +7,7 @@ from sqlmodel import select
 
 from .base_repository import BaseRepository
 from ..models import Story
-from ..models.DTOs.filters.story_filter import StoryFilter
+from src.models.DTOs.filters.sql_db.story_filter import StoryFilter
 
 
 if TYPE_CHECKING:

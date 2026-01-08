@@ -5,7 +5,7 @@ from sqlmodel import col, select
 
 from .base_repository import BaseRepository
 from ..models import Highlight
-from ..models.DTOs.filters.highlight_filter import HighlightFilter
+from src.models.DTOs.filters.sql_db.highlight_filter import HighlightFilter
 
 if TYPE_CHECKING:
     from ..models import Person

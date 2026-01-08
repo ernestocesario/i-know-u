@@ -4,7 +4,7 @@ from sqlmodel import select, col
 
 from .base_repository import BaseRepository
 from ..models import Person
-from ..models.DTOs.filters.person_filter import PersonFilter
+from src.models.DTOs.filters.sql_db.person_filter import PersonFilter
 
 
 class PersonRepository(BaseRepository[Person, PersonFilter]):

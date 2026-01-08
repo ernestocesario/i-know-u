@@ -2,7 +2,7 @@ from typing import TypeVar, Generic, List, Optional, Type, Any
 from abc import ABC, abstractmethod
 from sqlmodel import SQLModel, Session, select
 
-from src.models.DTOs.filters.base_filter import BaseFilter
+from src.models.DTOs.filters.sql_db.base_filter import BaseFilter
 
 T = TypeVar("T", bound=SQLModel)
 F = TypeVar("F", bound=BaseFilter)

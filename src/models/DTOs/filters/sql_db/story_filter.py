@@ -2,15 +2,15 @@ from typing import Optional
 from datetime import datetime
 
 from .base_filter import BaseFilter
-from ... import Post
+from src.models import Person
 
 
-class CommentFilter(BaseFilter):
+class StoryFilter(BaseFilter):
     min_publication_datetime: Optional[datetime] = None
     max_publication_datetime: Optional[datetime] = None
 
-    text_contains: Optional[str] = None
+    processed: Optional[bool] = None
 
 
-    # Relationship: many-to-one with Post
-    post_is: Optional[Post] = None
+    # Relationship: many-to-one with Person
+    owner_is: Optional[Person] = None

@@ -6,7 +6,7 @@ from sqlmodel import col
 
 from .base_repository import BaseRepository
 from ..models import Comment
-from ..models.DTOs.filters.comment_filter import CommentFilter
+from src.models.DTOs.filters.sql_db.comment_filter import CommentFilter
 
 if TYPE_CHECKING:
     from ..models import Post

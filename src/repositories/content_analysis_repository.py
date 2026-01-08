@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional, Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from .base_repository import BaseRepository
 from ..models import ContentAnalysis
-from ..models.DTOs.filters.content_analysis_filter import ContentAnalysisFilter
+from src.models.DTOs.filters.sql_db.content_analysis_filter import ContentAnalysisFilter
 from ..models.utils.taxonomies import *
 
 if TYPE_CHECKING:

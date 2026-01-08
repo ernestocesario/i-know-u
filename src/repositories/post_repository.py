@@ -7,7 +7,7 @@ from sqlmodel import col, select
 
 from .base_repository import BaseRepository
 from ..models import Post
-from ..models.DTOs.filters.post_filter import PostFilter
+from src.models.DTOs.filters.sql_db.post_filter import PostFilter
 
 if TYPE_CHECKING:
     from ..models import Person

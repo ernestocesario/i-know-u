@@ -2,7 +2,7 @@ from typing import Optional
 from datetime import datetime
 
 from .base_filter import BaseFilter
-from ... import Post, Highlight, Story, ContentAnalysis
+from src.models import Post, Highlight, Story, ContentAnalysis
 
 
 class ContentFilter(BaseFilter):

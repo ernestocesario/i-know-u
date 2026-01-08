@@ -2,7 +2,7 @@ from typing import Optional
 from datetime import datetime
 
 from .base_filter import BaseFilter
-from ... import Person
+from src.models import Person
 
 
 class PostFilter(BaseFilter):
