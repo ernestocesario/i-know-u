@@ -1,13 +1,16 @@
 import logging
+from typing import List
 
 from sqlmodel import Session
 
 from src.models import Person, Content
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
+from src.models.DTOs.filters.sql_db.post_filter import PostFilter
 from src.models.DTOs.filters.sql_db.story_filter import StoryFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO
 from src.models.utils.vector_object_type import VectorObjectType
 from src.repositories.person_repository import PersonRepository
+from src.repositories.post_repository import PostRepository
 from src.repositories.story_repository import StoryRepository
 from src.services.ai.interfaces.base_ai_provider import BaseAIProvider
 from src.services.ai.interfaces.base_vector_store import BaseVectorStore
@@ -31,6 +34,7 @@ class ContentProcessorService:
 
         self.person_repository = PersonRepository(session)
         self.story_repository = StoryRepository(session)
+        self.post_repository = PostRepository(session)
 
 
     # TODO add process_person_metadata method, and add VectorObjectType .PERSON_METADATA
@@ -45,15 +49,16 @@ class ContentProcessorService:
         """
         # 1. Fetch person
         person = self.person_repository.get_by_id(person_id)
+
         if not person:
             self.logger.error(f"Person with ID {person_id} not found.")
-            return 0
+            raise ValueError(f"Person with ID {person_id} not found.")
 
         # 2. Fetch unprocessed stories
         unprocessed_stories = self.story_repository.find(
             StoryFilter(
                 owner_is=person,
-                processed=False
+                processed_is=False
             )
         )
 
@@ -92,6 +97,81 @@ class ContentProcessorService:
         return processed_count
 
 
+    def process_posts(self, person_id: int) -> int:
+        """
+        Fetches unprocessed stories, runs AI analysis, updates SQL DB and Vector Store.
+        """
+        # 1. Fetch person
+        person = self.person_repository.get_by_id(person_id)
+
+        if not person:
+            self.logger.error(f"Person with ID {person_id} not found.")
+            raise ValueError(f"Person with ID {person_id} not found.")
+
+        # 2. Fetch unprocessed posts
+        unprocessed_posts = self.post_repository.find(
+            PostFilter(
+                owner_is=person,
+                processed_is=False
+            )
+        )
+
+        if not unprocessed_posts:
+            return 0
+
+        processed_count = 0
+
+        # 3. Process each unprocessed post
+        for post in unprocessed_posts:
+            try:
+                if not post.contents:
+                    raise ValueError(f"Post ID {post.id} has no associated contents.")
+
+                content_descriptions: List[str] = []
+
+                # A. Process each content in the post
+                for content in post.contents:
+                    # A.1 File path retrieval for post content
+                    content_path = self.file_manager.get_post_file_path(
+                        user_external_id=person.external_id,
+                        post_external_id=post.external_id,
+                        content_external_id=content.external_id
+                    )
+
+                    # A.2 Process content
+                    content_description = self._process_single_content(
+                        person=person,
+                        content=content,
+                        content_path=content_path,
+                        vector_object_id=content.id,
+                        vector_object_type=VectorObjectType.POST
+                    )
+
+                    content_descriptions.append(content_description)
+
+                # B. Generate post summary from content descriptions
+                post_inferred_summary = self.ai_provider.summarize_collection(content_descriptions)
+                post.inferred_summary = post_inferred_summary
+
+                summary_doc = VectorDocumentDTO(
+                    text=post_inferred_summary,
+                    person_id=person.id,
+                    object_type=VectorObjectType.POST,
+                    object_id=post.id,
+                    mime_type="text/plain",
+                    content_analysis_dto=None
+                )
+                self.vector_store.add_document(summary_doc)
+
+                post.processed = True
+                self.session.add(post)
+                self.session.commit()
+                processed_count += 1
+            except Exception as e:
+                self.session.rollback()
+                self.logger.error(f"Error processing post ID {post.id}: {e}")
+        return processed_count
+
 
     # *******************************************************
     # Private methods
@@ -105,6 +185,10 @@ class ContentProcessorService:
             vector_object_id: int,
             vector_object_type: VectorObjectType
     ) -> str:
+        # Important because a content can be associated to multiple objects (e.g. multiple stories and multiple highlights)
+        if content.processed:
+            return content.inferred_text
+
         content_inferred_text = self.ai_provider.get_content_description(
             file_path=content_path,
             mime_type=content.mime_type
