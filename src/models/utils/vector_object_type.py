@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 class VectorObjectType(str, Enum):
-    CONTENT = auto()
+    STORY = auto()
     POST = auto()
     HIGHLIGHT = auto()
 
