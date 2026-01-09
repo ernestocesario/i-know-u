@@ -7,6 +7,8 @@ from src.models import Person
 class HighlightFilter(BaseFilter):
     title_contains: Optional[str] = None
 
+    processed_is: Optional[bool] = None
+
     inference_summary_contains: Optional[str] = None
 
 

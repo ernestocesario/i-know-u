@@ -37,6 +37,9 @@ class HighlightRepository(BaseRepository[Highlight, HighlightFilter]):
         if filters.title_contains:
             statement = self._apply_title_contains(statement, filters.title_contains)
 
+        if filters.processed_is is not None:
+            statement = self._apply_processed_is(statement, filters.processed_is)
+
         if filters.inference_summary_contains:
             statement = self._apply_inference_summary_contains(statement, filters.inference_summary_contains)
 
@@ -49,6 +52,10 @@ class HighlightRepository(BaseRepository[Highlight, HighlightFilter]):
     @staticmethod
     def _apply_title_contains(statement: Any, value: str) -> Any:
         return statement.where(col(Highlight.title).ilike(f"%{value}%"))
+
+    @staticmethod
+    def _apply_processed_is(statement: Any, value: bool) -> Any:
+        return statement.where(Highlight.processed == value)
 
     @staticmethod
     def _apply_inference_summary_contains(statement: Any, value: str) -> Any:

@@ -51,6 +51,9 @@ class PostRepository(BaseRepository[Post, PostFilter]):
         if filters.max_n_likes is not None:
             statement = self._apply_max_likes(statement, filters.max_n_likes)
 
+        if filters.processed_is is not None:
+            statement = self._apply_processed_is(statement, filters.processed_is)
+
         if filters.inference_summary_contains:
             statement = self._apply_inference_summary_contains(statement, filters.inference_summary_contains)
 
@@ -79,6 +82,10 @@ class PostRepository(BaseRepository[Post, PostFilter]):
     @staticmethod
     def _apply_max_likes(statement: Any, value: int) -> Any:
         return statement.where(Post.n_likes <= value)
+
+    @staticmethod
+    def _apply_processed_is(statement: Any, value: bool) -> Any:
+        return statement.where(Post.processed == value)
 
     @staticmethod
     def _apply_inference_summary_contains(statement: Any, value: str) -> Any:

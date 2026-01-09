@@ -44,8 +44,8 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
         if filters.max_publication_datetime:
             statement = self._apply_max_publication_datetime(statement, filters.max_publication_datetime)
 
-        if filters.processed is not None:
-            statement = self._apply_processed(statement, filters.processed)
+        if filters.processed_is is not None:
+            statement = self._apply_processed_is(statement, filters.processed_is)
 
         if filters.owner_is:
             statement = self._apply_owner_is(statement, filters.owner_is)
@@ -62,7 +62,7 @@ class StoryRepository(BaseRepository[Story, StoryFilter]):
         return statement.where(Story.publication_datetime <= value)
 
     @staticmethod
-    def _apply_processed(statement: Any, value: bool) -> Any:
+    def _apply_processed_is(statement: Any, value: bool) -> Any:
         return statement.where(Story.processed == value)
 
     @staticmethod

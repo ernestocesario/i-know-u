@@ -18,6 +18,8 @@ class Highlight(SQLModel, table=True):
 
     title: str = Field()
 
+    processed: bool = Field(default=False)
+
     # calculated by AI models
     inference_summary: Optional[str] = Field(default=None)
 

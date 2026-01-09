@@ -14,6 +14,8 @@ class PostFilter(BaseFilter):
     min_n_likes: Optional[int] = None
     max_n_likes: Optional[int] = None
 
+    processed_is: Optional[bool] = None
+
     inference_summary_contains: Optional[str] = None
 
 

@@ -19,6 +19,8 @@ class Post(SQLModel, table=True):
     caption: Optional[str] = Field(default=None)
     n_likes: Optional[int] = Field(default=None)
 
+    processed: bool = Field(default=False)
+
     # calculated by AI models
     inference_summary: Optional[str] = Field(default=None)
 
