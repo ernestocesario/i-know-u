@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, List
 
 from instamine.core import Instamine
 from sqlmodel import Session
@@ -159,7 +158,7 @@ class ImportService:
                 content_entity = InstamineMapper.to_content_entity(content_dto)
 
                 # Link content to story
-                content_entity.story = story_entity
+                story_entity.content = content_entity
 
                 # Save content file
                 content_data = content_dto.read()
@@ -171,7 +170,7 @@ class ImportService:
                     mime_type=content_dto.mime_type
                 )
 
-                self.session.add(content_entity)
+                self.session.add(story_entity)
                 self.session.commit()
             except Exception as e:
                 self.logger.error(f"Failed to import story '{story_dto.id}': {e}")

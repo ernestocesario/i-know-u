@@ -31,16 +31,16 @@ class Content(SQLModel, table=True):
 
     # Relationships
     # Many-to-one relationship with Post
-    post_id: Optional[int] = Field(foreign_key="posts.id")
+    post_id: Optional[int] = Field(default=None, foreign_key="posts.id")
     post: Optional[Post] = Relationship(back_populates="contents")
 
     # Many-to-one relationship with Highlight
-    highlight_id: Optional[int] = Field(foreign_key="highlights.id")
+    highlight_id: Optional[int] = Field(default=None, foreign_key="highlights.id")
     highlight: Optional[Highlight] = Relationship(back_populates="contents")
 
     # One-to-one relationship with Story
-    story_id: int = Field(foreign_key="stories.id", unique=True)
-    story: Story = Relationship(back_populates="content")
+    story_id: Optional[int] = Field(default=None, foreign_key="stories.id", unique=True)
+    story: Optional[Story] = Relationship(back_populates="content")
 
     # One-to-one relationship with ContentAnalysis
     content_analysis: Optional[ContentAnalysis] = Relationship(
