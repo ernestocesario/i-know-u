@@ -2,6 +2,7 @@ import logging
 import mimetypes
 import os
 import shutil
+from typing import Optional
 
 
 class FileStorageManager:
@@ -63,6 +64,36 @@ class FileStorageManager:
         """
         path = os.path.join(self.base_root, user_id, "Highlights", highlight_id)
         self._save_file(path, content_id, data, mime_type)
+
+
+    def get_story_path(self, user_external_id: str, story_external_id: str) -> Optional[str]:
+        """
+        Locates the story file on disk, ignoring the extension.
+        Path: data/contents/{user}/Stories/{story_id}.*
+        """
+        target_dir = os.path.join(self.base_root, user_external_id, "Stories")
+        return self._find_file_by_stem(target_dir, story_external_id)
+
+
+    def get_post_file_path(self, user_external_id: str, post_external_id: str, content_external_id: str) -> Optional[
+        str]:
+        """
+        Locates a specific file within a Post folder.
+        Path: data/contents/{user}/Posts/{post_id}/{content_id}.*
+        """
+        target_dir = os.path.join(self.base_root, user_external_id, "Posts", post_external_id)
+
+        return self._find_file_by_stem(target_dir, content_external_id)
+
+
+    def get_highlight_path(self, user_external_id: str, highlight_external_id: str, content_external_id: str) -> Optional[str]:
+        """
+        Locates a file in a Highlight folder.
+        Path: data/contents/{user}/Highlights/{highlight_id}/{content_id}.*
+        """
+        target_dir = os.path.join(self.base_root, user_external_id, "Highlights", highlight_external_id)
+
+        return self._find_file_by_stem(target_dir, content_external_id)
 
 
     def delete_user_folder(self, user_id: str):
@@ -135,6 +166,22 @@ class FileStorageManager:
             return full_path
         except Exception as e:
             raise IOError(f"Failed to save file at {full_path}: {str(e)}")
+
+
+    def _find_file_by_stem(self, directory: str, target_stem: str) -> Optional[str]:
+        if not os.path.exists(directory):
+            self.logger.error(f"Directory {directory} does not exist")
+            return None
+
+        try:
+            for filename in os.listdir(directory):
+                stem, ext = os.path.splitext(filename)
+                if stem == target_stem:
+                    return os.path.join(directory, filename)
+            return None
+        except Exception as e:
+            self.logger.error(f"Error searching for file in {directory}: {str(e)}")
+            return None
 
 
     def _delete_folder_recursively(self, path: str):
