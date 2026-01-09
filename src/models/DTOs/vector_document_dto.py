@@ -15,7 +15,7 @@ class VectorDocumentDTO(BaseModel):
     object_type: VectorObjectType
     mime_type: Optional[str] = None
 
-    content_analysis: Optional[ContentAnalysisDTO] = None
+    content_analysis_dto: Optional[ContentAnalysisDTO] = None
 
 
     def to_chroma_metadata(self) -> Dict[str, Any]:
@@ -36,8 +36,8 @@ class VectorDocumentDTO(BaseModel):
             metadata[VectorMetadataKeys.MIME_TYPE] = self.mime_type
 
         # 3. Flatten content analysis if present
-        if self.content_analysis:
-            content_analysis_dict = self.content_analysis.model_dump(exclude_none=True)
+        if self.content_analysis_dto:
+            content_analysis_dict = self.content_analysis_dto.model_dump(exclude_none=True)
 
             for key, value in content_analysis_dict.items():
                 metadata[key] = str(value)
