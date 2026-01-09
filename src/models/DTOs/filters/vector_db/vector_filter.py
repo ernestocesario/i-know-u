@@ -13,7 +13,7 @@ class VectorFilter(BaseModel):
     object_id: Optional[int] = None
     mime_type: Optional[str] = None
 
-    ContentAnalysisDTO: Optional[ContentAnalysisDTO] = None
+    content_analysis_dto: Optional[ContentAnalysisDTO] = None
 
 
     def build_filter(self) -> Optional[Dict[str, Any]]:
