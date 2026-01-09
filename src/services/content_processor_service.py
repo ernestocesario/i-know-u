@@ -2,8 +2,7 @@ import logging
 
 from sqlmodel import Session
 
-from src.config.app_properties import AppProperties
-from src.models import ContentAnalysis
+from src.models import Person, Content
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
 from src.models.DTOs.filters.sql_db.story_filter import StoryFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO
@@ -34,6 +33,12 @@ class ContentProcessorService:
         self.story_repository = StoryRepository(session)
 
 
+    # TODO add process_person_metadata method, and add VectorObjectType .PERSON_METADATA
+
+    # *******************************************************
+    # Public methods
+    # *******************************************************
+
     def process_stories(self, person_id: int) -> int:
         """
         Fetches unprocessed stories, runs AI analysis, updates SQL DB and Vector Store.
@@ -59,43 +64,20 @@ class ContentProcessorService:
 
         for story in unprocessed_stories:
             try:
-                content = story.content
-
                 # A. File path retrival for story content
                 content_path = self.file_manager.get_story_path(
                     user_external_id=person.external_id,
                     story_external_id=story.external_id
                 )
 
-                if not content_path:
-                    self.logger.error(f"File missing for story external ID {story.external_id}. Skipping.")
-                    continue
-
                 # B. Content analysis via AI provider
-                content_inferred_text = self.ai_provider.get_content_description(file_path=content_path, mime_type=content.mime_type)
-
-                content_analysis_dto: ContentAnalysisDTO = self.ai_provider.get_content_analysis(file_path=content_path, mime_type=content.mime_type)
-
-                # C. Update content and analysis in DB
-                content.inferred_text = content_inferred_text
-                content.processed = True
-
-                content_analysis = content_analysis_dto.to_entity(content_id=content.id)
-                self.session.add(content_analysis)
-                content.content_analysis = content_analysis
-
-                self.session.add(content)
-
-                # D. Update Vector Store
-                vector_doc = VectorDocumentDTO(
-                    text=content_inferred_text,
-                    person_id=person.id,
-                    object_type=VectorObjectType.STORY,
-                    object_id=story.id,
-                    mime_type=content.mime_type,
-                    content_analysis_dto=content_analysis_dto
+                self._process_single_content(
+                    person=person,
+                    content=story.content,
+                    content_path=content_path,
+                    vector_object_id=story.id,
+                    vector_object_type=VectorObjectType.STORY
                 )
-                self.vector_store.add_document(vector_doc)
 
                 story.processed = True
                 self.session.add(story)
@@ -108,3 +90,50 @@ class ContentProcessorService:
                 self.logger.error(f"Error processing story ID {story.id}: {e}")
 
         return processed_count
+
+
+
+    # *******************************************************
+    # Private methods
+    # *******************************************************
+
+    def _process_single_content(
+            self,
+            person: Person,
+            content: Content,
+            content_path: str,
+            vector_object_id: int,
+            vector_object_type: VectorObjectType
+    ) -> str:
+        content_inferred_text = self.ai_provider.get_content_description(
+            file_path=content_path,
+            mime_type=content.mime_type
+        )
+
+        content_analysis_dto: ContentAnalysisDTO = self.ai_provider.get_content_analysis(
+            file_path=content_path,
+            mime_type=content.mime_type
+        )
+
+        # C. Update content and analysis in DB
+        content.inferred_text = content_inferred_text
+        content.processed = True
+
+        content_analysis = content_analysis_dto.to_entity(content_id=content.id)
+        self.session.add(content_analysis)
+        content.content_analysis = content_analysis
+
+        self.session.add(content)
+
+        # D. Update Vector Store
+        vector_doc = VectorDocumentDTO(
+            text=content_inferred_text,
+            person_id=person.id,
+            object_type=vector_object_type,
+            object_id=vector_object_id,
+            mime_type=content.mime_type,
+            content_analysis_dto=content_analysis_dto
+        )
+        self.vector_store.add_document(vector_doc)
+
+        return content_inferred_text
