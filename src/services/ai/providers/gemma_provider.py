@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from typing import List, Optional
+from typing import List
 
 from google import genai
 from google.genai import types
@@ -86,12 +86,12 @@ class GemmaProvider(BaseAIProvider):
                     self.logger.warning(f"Error deleting Google file '{google_file.name}': {cleanup_error}")
 
 
-    def get_content_analysis(self, file_path: str, mime_type: str) -> Optional[ContentAnalysisDTO]:
+    def get_content_analysis(self, file_path: str, mime_type: str) -> ContentAnalysisDTO:
         """
         Analyzes the content of the given file and returns structured metadata (Mood, Season, etc.).
         """
         if not os.path.exists(file_path):
-            return None
+            raise FileNotFoundError(f"File not found: {file_path}")
 
         google_file = None
         try:

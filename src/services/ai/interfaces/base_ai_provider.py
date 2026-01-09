@@ -15,7 +15,7 @@ class BaseAIProvider(ABC):
 
 
     @abstractmethod
-    def get_content_analysis(self, file_path: str, mime_type: str) -> Optional[ContentAnalysisDTO]:
+    def get_content_analysis(self, file_path: str, mime_type: str) -> ContentAnalysisDTO:
         """
         Analyzes the image/video and returns structured metadata (Mood, Season, etc.).
         Returns a DTO, not a DB Entity.
