@@ -18,7 +18,7 @@ class BaseRepository(Generic[T, F], ABC):
     # Public methods
     # *******************************************************
 
-    def get_by_id(self, id: str) -> Optional[T]:
+    def get_by_id(self, id: int) -> Optional[T]:
         return self.session.get(self.model, id)
 
 
