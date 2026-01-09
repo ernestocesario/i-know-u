@@ -11,20 +11,27 @@ from src.repositories.highlight_repository import HighlightRepository
 from src.repositories.person_repository import PersonRepository
 from src.repositories.post_repository import PostRepository
 from src.repositories.story_repository import StoryRepository
+from src.services.ai.interfaces.base_vector_store import BaseVectorStore
 from src.services.mappers.instamine_mapper import InstamineMapper
 from src.services.removal_service import RemovalService
 from src.services.storage.file_storage_manager import FileStorageManager
 
 
 class ImportService:
-    def __init__(self, session: Session, instamine_client: Instamine):
+    def __init__(
+            self,
+            session: Session,
+            instamine_client: Instamine,
+            vector_store: BaseVectorStore
+    ):
         self.session = session
         self.instamine = instamine_client
+        self.vector_store = vector_store
 
         self.logger = logging.getLogger(__name__)
 
         self.file_manager = FileStorageManager(base_root=AppProperties.CONTENTS_DIR)
-        self.removal_service = RemovalService(session)
+        self.removal_service = RemovalService(session=session, vector_store=vector_store)
 
         self.person_repository = PersonRepository(session)
         self.post_repository = PostRepository(session)
