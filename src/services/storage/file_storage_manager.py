@@ -66,7 +66,7 @@ class FileStorageManager:
         self._save_file(path, content_id, data, mime_type)
 
 
-    def get_story_path(self, user_external_id: str, story_external_id: str) -> str:
+    def get_story_filepath(self, user_external_id: str, story_external_id: str) -> str:
         """
         Locates the story file on disk, ignoring the extension.
         Path: data/contents/{user}/Stories/{story_id}.*
@@ -75,7 +75,7 @@ class FileStorageManager:
         return self._find_file_by_stem(target_dir, story_external_id)
 
 
-    def get_post_file_path(self, user_external_id: str, post_external_id: str, content_external_id: str) -> str:
+    def get_post_filepath(self, user_external_id: str, post_external_id: str, content_external_id: str) -> str:
         """
         Locates a specific file within a Post folder.
         Path: data/contents/{user}/Posts/{post_id}/{content_id}.*
@@ -85,7 +85,7 @@ class FileStorageManager:
         return self._find_file_by_stem(target_dir, content_external_id)
 
 
-    def get_highlight_path(self, user_external_id: str, highlight_external_id: str, content_external_id: str) -> str:
+    def get_highlight_filepath(self, user_external_id: str, highlight_external_id: str, content_external_id: str) -> str:
         """
         Locates a file in a Highlight folder.
         Path: data/contents/{user}/Highlights/{highlight_id}/{content_id}.*

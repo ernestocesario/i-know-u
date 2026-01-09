@@ -5,10 +5,12 @@ from sqlmodel import Session
 
 from src.models import Person, Content
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
+from src.models.DTOs.filters.sql_db.highlight_filter import HighlightFilter
 from src.models.DTOs.filters.sql_db.post_filter import PostFilter
 from src.models.DTOs.filters.sql_db.story_filter import StoryFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO
 from src.models.utils.vector_object_type import VectorObjectType
+from src.repositories.highlight_repository import HighlightRepository
 from src.repositories.person_repository import PersonRepository
 from src.repositories.post_repository import PostRepository
 from src.repositories.story_repository import StoryRepository
@@ -35,6 +37,7 @@ class ContentProcessorService:
         self.person_repository = PersonRepository(session)
         self.story_repository = StoryRepository(session)
         self.post_repository = PostRepository(session)
+        self.highlight_repository = HighlightRepository(session)
 
 
     # TODO add process_person_metadata method, and add VectorObjectType .PERSON_METADATA
@@ -67,10 +70,11 @@ class ContentProcessorService:
 
         processed_count = 0
 
+        # 3. Process each unprocessed story
         for story in unprocessed_stories:
             try:
                 # A. File path retrival for story content
-                content_path = self.file_manager.get_story_path(
+                content_path = self.file_manager.get_story_filepath(
                     user_external_id=person.external_id,
                     story_external_id=story.external_id
                 )
@@ -132,7 +136,7 @@ class ContentProcessorService:
                 # A. Process each content in the post
                 for content in post.contents:
                     # A.1 File path retrieval for post content
-                    content_path = self.file_manager.get_post_file_path(
+                    content_path = self.file_manager.get_post_filepath(
                         user_external_id=person.external_id,
                         post_external_id=post.external_id,
                         content_external_id=content.external_id
@@ -170,6 +174,81 @@ class ContentProcessorService:
             except Exception as e:
                 self.session.rollback()
                 self.logger.error(f"Error processing post ID {post.id}: {e}")
+        return processed_count
+
+
+    def process_highlights(self, person_id: int) -> int:
+        """
+        Fetches unprocessed highlights, runs AI analysis, updates SQL DB and Vector Store.
+        """
+        # 1. Fetch person
+        person = self.person_repository.get_by_id(person_id)
+        if not person:
+            self.logger.error(f"Person with ID {person_id} not found.")
+            raise ValueError(f"Person with ID {person_id} not found.")
+
+        # 2. Fetch unprocessed highlights
+        unprocessed_highlights = self.highlight_repository.find(
+            HighlightFilter(
+                owner_is=person,
+                processed_is=False
+            )
+        )
+
+        if not unprocessed_highlights:
+            return 0
+
+        processed_count = 0
+
+        # 3. Process each unprocessed highlight
+        for highlight in unprocessed_highlights:
+            try:
+                if not highlight.contents:
+                    raise ValueError(f"Highlight ID {highlight.id} has no associated contents.")
+
+                content_descriptions: List[str] = []
+
+                # A. Process each content in the post
+                for content in highlight.contents:
+                    # A.1 File path retrieval for highlight content
+                    content_path = self.file_manager.get_highlight_filepath(
+                        user_external_id=person.external_id,
+                        highlight_external_id=highlight.external_id,
+                        content_external_id=content.external_id
+                    )
+
+                    # A.2 Process content
+                    content_description = self._process_single_content(
+                        person=person,
+                        content=content,
+                        content_path=content_path,
+                        vector_object_id=content.id,
+                        vector_object_type=VectorObjectType.HIGHLIGHT
+                    )
+
+                    content_descriptions.append(content_description)
+
+                # B. Generate highlight summary from content descriptions
+                highlight_inferred_summary = self.ai_provider.summarize_collection(content_descriptions)
+                highlight.inferred_summary = highlight_inferred_summary
+
+                summary_doc = VectorDocumentDTO(
+                    text=highlight_inferred_summary,
+                    person_id=person.id,
+                    object_type=VectorObjectType.HIGHLIGHT,
+                    object_id=highlight.id,
+                    mime_type="text/plain",
+                    content_analysis_dto=None
+                )
+                self.vector_store.add_document(summary_doc)
+
+                highlight.processed = True
+                self.session.add(highlight)
+                self.session.commit()
+                processed_count += 1
+            except Exception as e:
+                self.session.rollback()
+                self.logger.error(f"Error processing highlight ID {highlight.id}: {e}")
         return processed_count
 
 
