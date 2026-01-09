@@ -2,6 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .. import ContentAnalysis
 from ..utils.taxonomies import *
 
 
@@ -24,3 +25,15 @@ class ContentAnalysisDTO(BaseModel):
     # Emotional and stylistic attributes
     mood: Optional[Mood] = None
     fashion_style: Optional[FashionStyle] = None
+
+
+    def to_entity(self, content_id: int) -> ContentAnalysis:
+        """
+        Converts this DTO into a SQLModel Entity ready for the database.
+        """
+        data = self.model_dump(exclude_none=True)
+
+        return ContentAnalysis(
+            content_id=content_id,
+            **data
+        )
