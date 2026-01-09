@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 class VectorObjectType(str, Enum):
+    PROFILE = auto()
     STORY = auto()
     POST = auto()
     HIGHLIGHT = auto()

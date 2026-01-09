@@ -37,3 +37,11 @@ class BaseAIProvider(ABC):
         Aggregates multiple contents descriptions into a summary for (Post/Highlight).
         """
         pass
+
+
+    @abstractmethod
+    def enrich_profile(self, username: str, full_name: str, bio: str, stats: dict) -> str:
+        """
+        Generates a narrative profile description based on raw metadata.
+        """
+        pass

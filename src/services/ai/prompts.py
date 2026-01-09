@@ -89,3 +89,32 @@ class PromptTemplates:
     - If the answer is not in the context, say "I don't know".
     - Output Language: English.
     """
+
+    PROFILE_ENRICHMENT_SYSTEM = """
+        You are an expert profiler and biographer.
+        Your task is to analyze the raw metadata of a social media profile and generate a comprehensive, natural language description of the person.
+
+        Input Data:
+        - Username, Full Name, Bio (often contains emojis, abbreviations like 'NY', '25yo', 'MIT').
+        - Statistics (Followers, Following, Posts).
+
+        Guidelines:
+        1. Decode Context: Interpret abbreviations (e.g., 'M.Sc.' -> Master of Science, 'ITA/ENG' -> Speaks Italian and English).
+        2. Infer Personality: Use the bio tone and stats to infer if they are an influencer, a business, a private person, or a creator.
+        3. Narrative Style: Write a fluid paragraph starting with "This user...". Do not use bullet points.
+        4. Completeness: Integrate the statistics naturally (e.g., "They have a significant following of...").
+
+        Constraint: Output strictly in English.
+        """
+
+    PROFILE_ENRICHMENT_USER = """
+        Here is the profile metadata:
+        Username: {username}
+        Full Name: {full_name}
+        Bio: {bio}
+        Followers: {n_followers}
+        Following: {n_following}
+        Posts: {n_posts}
+
+        Generate the narrative description now.
+        """

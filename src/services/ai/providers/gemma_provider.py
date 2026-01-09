@@ -177,6 +177,30 @@ class GemmaProvider(BaseAIProvider):
             raise e
 
 
+    def enrich_profile(self, username: str, full_name: str, bio: str, stats: dict) -> str:
+        try:
+            formatted_instruction = PromptTemplates.PROFILE_ENRICHMENT_USER.format(
+                username=username,
+                full_name=full_name or "Not provided",
+                bio=bio or "Empty bio",
+                n_followers=stats.get("followers", 0),
+                n_following=stats.get("following", 0),
+                n_posts=stats.get("posts", 0)
+            )
+
+            messages: List[BaseMessage] = [
+                SystemMessage(content=PromptTemplates.PROFILE_ENRICHMENT_SYSTEM),
+                HumanMessage(content=formatted_instruction)
+            ]
+
+            response = self.llm.invoke(messages)
+            return response.content
+
+        except Exception as e:
+            self.logger.error(f"Profile enrichment failed for {username}: {e}")
+            raise e
+
+
 
     # *******************************************************
     # Private methods

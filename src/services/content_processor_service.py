@@ -40,11 +40,66 @@ class ContentProcessorService:
         self.highlight_repository = HighlightRepository(session)
 
 
-    # TODO add process_person_metadata method, and add VectorObjectType .PERSON_METADATA
 
     # *******************************************************
     # Public methods
     # *******************************************************
+
+    def process_profile_info(self, person_id: int) -> bool:
+        """
+        Analyzes the Person's raw metadata (Bio, Stats) to create a
+        narrative description and indexes it as a PROFILE vector.
+        """
+        # 1. Fetch person
+        person = self.person_repository.get_by_id(person_id)
+
+        if not person:
+            self.logger.error(f"Person with ID {person_id} not found.")
+            raise ValueError(f"Person with ID {person_id} not found.")
+
+        # 2. Check if already processed
+        if person.processed:
+            return False
+
+        # 3. Process profile info
+        try:
+            stats = {
+                "followers": person.n_followers,
+                "following": person.n_following,
+                "posts": person.n_posts,
+            }
+
+            person_inferred_text = self.ai_provider.enrich_profile(
+                username=person.username,
+                full_name=person.full_name,
+                bio=person.bio,
+                stats=stats
+            )
+
+            # 4. Update person entity
+            person.inferred_text = person_inferred_text
+            person.processed = True
+            self.session.add(person)
+
+            # 5. Update Vector Store
+            vector_doc = VectorDocumentDTO(
+                text=person_inferred_text,
+                person_id=person.id,
+                object_type=VectorObjectType.PROFILE,
+                object_id=person.id,
+                mime_type="text/plain",
+                content_analysis_dto=None
+            )
+            self.vector_store.add_document(vector_doc)
+            self.session.commit()
+
+        except Exception as e:
+            self.session.rollback()
+            self.logger.error(f"Error processing profile info for person ID {person.id}: {e}")
+            raise e
+
+        return True
+
 
     def process_stories(self, person_id: int) -> int:
         """
