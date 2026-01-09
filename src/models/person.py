@@ -21,6 +21,11 @@ class Person(SQLModel, table=True):
     n_following: Optional[int] = Field(default=None)
     n_posts: Optional[int] = Field(default=None)
 
+    # calculated by AI models
+    inferred_text: Optional[str] = Field(default=None)
+
+    processed: bool = Field(default=False)
+
 
 
     # Relationships

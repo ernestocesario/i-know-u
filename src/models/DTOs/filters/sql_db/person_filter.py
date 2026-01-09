@@ -16,3 +16,7 @@ class PersonFilter(BaseFilter):
 
     min_n_posts: Optional[int] = None
     max_n_posts: Optional[int] = None
+
+    inferred_text_contains: Optional[str] = None
+
+    processed_is: Optional[bool] = None

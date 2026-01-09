@@ -76,6 +76,12 @@ class PersonRepository(BaseRepository[Person, PersonFilter]):
         if filters.max_n_posts is not None:
             statement = self._apply_max_posts(statement, filters.max_n_posts)
 
+        if filters.inferred_text_contains:
+            statement = self._apply_inferred_text_contains(statement, filters.inferred_text_contains)
+
+        if filters.processed_is is not None:
+            statement = self._apply_processed_is(statement, filters.processed_is)
+
         return statement
 
 
@@ -114,3 +120,11 @@ class PersonRepository(BaseRepository[Person, PersonFilter]):
     @staticmethod
     def _apply_max_posts(statement: Any, value: int) -> Any:
         return statement.where(Person.n_posts <= value)
+
+    @staticmethod
+    def _apply_inferred_text_contains(statement: Any, value: str) -> Any:
+        return statement.where(col(Person.inferred_text).ilike(f"%{value}%"))
+
+    @staticmethod
+    def _apply_processed_is(statement: Any, value: bool) -> Any:
+        return statement.where(Person.processed == value)
