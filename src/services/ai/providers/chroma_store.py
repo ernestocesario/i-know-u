@@ -36,7 +36,7 @@ class ChromaVectorStore(BaseVectorStore):
         )
 
 
-    def add_documents(self, document: VectorDocumentDTO) -> None:
+    def add_document(self, document: VectorDocumentDTO) -> None:
         """
         Embeds and saves textual documents into the vector store.
         """
