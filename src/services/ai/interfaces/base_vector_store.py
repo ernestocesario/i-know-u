@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import List, Optional
 
 from src.models.DTOs.filters.vector_db.vector_filter import VectorFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO

@@ -5,7 +5,6 @@ import logging
 from instamine.core import Instamine
 from sqlmodel import Session
 
-from src.config.app_properties import AppProperties
 from src.repositories.content_repository import ContentRepository
 from src.repositories.highlight_repository import HighlightRepository
 from src.repositories.person_repository import PersonRepository

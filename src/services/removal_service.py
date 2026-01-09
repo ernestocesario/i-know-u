@@ -4,7 +4,6 @@ import logging
 
 from sqlmodel import Session
 
-from src.config.app_properties import AppProperties
 from src.models import Person
 from src.models.DTOs.filters.sql_db.highlight_filter import HighlightFilter
 from src.models.DTOs.filters.sql_db.post_filter import PostFilter
