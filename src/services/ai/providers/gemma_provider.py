@@ -1,13 +1,14 @@
 import logging
 import os
 import time
-from typing import List
+from typing import List, Optional
 
 from google import genai
 from google.genai import types
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
+from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
 from src.services.ai.interfaces.base_ai_provider import BaseAIProvider
 from src.services.ai.prompts import PromptTemplates
 
@@ -29,16 +30,17 @@ class GemmaProvider(BaseAIProvider):
             temperature=0.0
         )
 
+        self.structured_llm = self.llm.with_structured_output(ContentAnalysisDTO)
+
 
     # *******************************************************
     # Public methods
     # *******************************************************
 
-    def analyze_content(self, file_path: str, mime_type: str) -> str:
+    def get_content_description(self, file_path: str, mime_type: str) -> str:
         """
         Analyzes the content of the given file and returns the inferred text.
         """
-
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File not found: {file_path}")
 
@@ -84,6 +86,47 @@ class GemmaProvider(BaseAIProvider):
                     self.logger.warning(f"Error deleting Google file '{google_file.name}': {cleanup_error}")
 
 
+    def get_content_analysis(self, file_path: str, mime_type: str) -> Optional[ContentAnalysisDTO]:
+        """
+        Analyzes the content of the given file and returns structured metadata (Mood, Season, etc.).
+        """
+        if not os.path.exists(file_path):
+            return None
+
+        google_file = None
+        try:
+            google_file = self._upload_file_to_google(file_path, mime_type)
+
+            messages: List[BaseMessage] = [
+                HumanMessage(
+                    content=[
+                        {
+                            "type": "text",
+                            "text": PromptTemplates.STRUCTURED_ANALYSIS_INSTRUCTION
+                        },
+                        {
+                            "type": "media",
+                            "file_uri": google_file.uri,
+                            "mime_type": mime_type
+                        }
+                    ]
+                )
+            ]
+
+            content_analysis_dto = self.structured_llm.invoke(messages)
+
+            return content_analysis_dto
+        except Exception as e:
+            self.logger.error(f"Error getting structured analysis from file '{file_path}': {e}")
+            raise e
+        finally:
+            if google_file:
+                try:
+                    self._delete_file_from_google(google_file)
+                except Exception as cleanup_error:
+                    self.logger.warning(f"Error deleting Google file '{google_file.name}': {cleanup_error}")
+
+
     def generate_response(self, context: str, question: str) -> str:
         """
         Generates a response based on the provided context and question.
@@ -105,6 +148,32 @@ class GemmaProvider(BaseAIProvider):
 
         except Exception as e:
             self.logger.error(f"Error generating response for question '{question}': {e}")
+            raise e
+
+
+    def summarize_collection(self, descriptions: List[str]) -> str:
+        """
+        Aggregates multiple contents descriptions into a summary for (Post/Highlight).
+        """
+        if not descriptions:
+            return ""
+
+        try:
+            bullet_points = "\n".join([f"- {desc}" for desc in descriptions])
+            formatted_instruction = PromptTemplates.SUMMARIZATION_INSTRUCTION.format(
+                items_descriptions=bullet_points
+            )
+
+            messages = [
+                SystemMessage(content=PromptTemplates.PARENT_SUMMARIZATION_SYSTEM),
+                HumanMessage(content=formatted_instruction)
+            ]
+
+            response = self.llm.invoke(messages)
+
+            return response.content
+        except Exception as e:
+            self.logger.error(f"Summarization failed: {e}")
             raise e
 
 
