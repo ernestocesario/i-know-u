@@ -25,8 +25,11 @@ class Story(SQLModel, table=True):
     owner_id: int = Field(foreign_key="persons.id")
     owner: Person = Relationship(back_populates="stories")
 
-    # One-to-many relationship with Content
-    contents: list[Content] = Relationship(
+    # One-to-one relationship with Content
+    content: Content = Relationship(
         back_populates="story",
-        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+        sa_relationship_kwargs={
+            "uselist": False,
+            "cascade": "all, delete-orphan",
+        },
     )

@@ -38,12 +38,15 @@ class Content(SQLModel, table=True):
     highlight_id: Optional[int] = Field(foreign_key="highlights.id")
     highlight: Optional[Highlight] = Relationship(back_populates="contents")
 
-    # Many-to-one relationship with Story
-    story_id: Optional[int] = Field(foreign_key="stories.id")
-    story: Optional[Story] = Relationship(back_populates="contents")
+    # One-to-one relationship with Story
+    story_id: int = Field(foreign_key="stories.id", unique=True)
+    story: Story = Relationship(back_populates="content")
 
     # One-to-one relationship with ContentAnalysis
     content_analysis: Optional[ContentAnalysis] = Relationship(
         back_populates="content",
-        sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+        sa_relationship_kwargs={
+            "uselist": False,
+            "cascade": "all, delete-orphan"
+        }
     )
