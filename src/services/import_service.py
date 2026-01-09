@@ -56,6 +56,8 @@ class ImportService:
 
             existing_person.sqlmodel_update(update_data)
 
+            existing_person.processed = False  # Mark for re-processing
+
             person_to_save = existing_person
         else:
             self.session.add(tmp_person)
