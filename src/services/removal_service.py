@@ -22,14 +22,14 @@ class RemovalService:
     def __init__(
             self,
             session: Session,
-            vector_store: BaseVectorStore
+            vector_store: BaseVectorStore,
+            file_manager: FileStorageManager
     ):
         self.logger = logging.getLogger(__name__)
 
         self.session = session
         self.vector_store = vector_store
-
-        self.file_manager = FileStorageManager(base_root=AppProperties.CONTENTS_DIR)
+        self.file_manager = file_manager
 
         self.person_repository = PersonRepository(session)
         self.post_repository = PostRepository(session)

@@ -22,16 +22,17 @@ class ImportService:
             self,
             session: Session,
             instamine_client: Instamine,
-            vector_store: BaseVectorStore
+            vector_store: BaseVectorStore,
+            file_manager: FileStorageManager
     ):
         self.session = session
         self.instamine = instamine_client
         self.vector_store = vector_store
+        self.file_manager = file_manager
 
         self.logger = logging.getLogger(__name__)
 
-        self.file_manager = FileStorageManager(base_root=AppProperties.CONTENTS_DIR)
-        self.removal_service = RemovalService(session=session, vector_store=vector_store)
+        self.removal_service = RemovalService(session=session, vector_store=vector_store, file_manager=file_manager)
 
         self.person_repository = PersonRepository(session)
         self.post_repository = PostRepository(session)
