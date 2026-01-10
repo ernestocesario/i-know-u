@@ -115,6 +115,25 @@ class FileStorageManager:
         self._delete_folder_recursively(highlights_path)
 
 
+    def clear_storage(self):
+        """
+        Deletes all files and folders in the base root.
+        Use with caution.
+        """
+
+        for item in os.listdir(self.base_root):
+            item_path = os.path.join(self.base_root, item)
+            try:
+                if os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                else:
+                    os.remove(item_path)
+            except Exception as e:
+                self.logger.error(f"Failed to delete {item_path}: {str(e)}")
+                raise IOError(f"Failed to delete {item_path}: {str(e)}")
+
+
+
     # *******************************************************
     # Private methods
     # *******************************************************

@@ -6,6 +6,7 @@ from sqlmodel import Session
 
 from src.models import Person
 from src.models.DTOs.filters.sql_db.highlight_filter import HighlightFilter
+from src.models.DTOs.filters.sql_db.person_filter import PersonFilter
 from src.models.DTOs.filters.sql_db.post_filter import PostFilter
 from src.models.DTOs.filters.sql_db.story_filter import StoryFilter
 from src.models.utils.vector_object_type import VectorObjectType
@@ -155,6 +156,35 @@ class RemovalService:
             self.session.rollback()
             self.logger.error(f"Error removing person '{username}': {e}")
             raise e
+
+
+    def remove_all_data(self):
+        """
+        Removes all data from the relational database, vector store, and file storage.
+        """
+
+        try:
+            # Delete all data from the relational database
+            persons = self.person_repository.find(
+                PersonFilter()
+            )
+
+            for person in persons:
+                self.session.delete(person)
+
+            # Clear the vector store
+            self.vector_store.clear_store()
+
+            # Clear all files from storage
+            self.file_manager.clear_storage()
+
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            self.logger.error(f"Error removing all data: {e}")
+            raise e
+
+
 
 
     # *******************************************************
