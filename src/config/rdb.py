@@ -12,8 +12,7 @@ engine = create_engine(DB_URL, echo=False, connect_args={"check_same_thread": Fa
 
 
 def get_session():
-    with Session(engine) as session:
-        yield session
+    return Session(engine)
 
 
 def create_db_and_tables():
