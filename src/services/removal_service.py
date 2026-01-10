@@ -40,6 +40,20 @@ class RemovalService:
     # Public methods
     # *******************************************************
 
+    def remove_profile_analysis(self, person: Person):
+        try:
+            # Delete profile analysis from the relational database
+            person.inferred_text = None
+            person.processed = False
+
+            # Delete profile analysis from the vector database
+            self.vector_store.delete(person_id=person.id, object_type=VectorObjectType.PROFILE)
+
+        except Exception as e:
+            self.logger.error(f"Error removing profile analysis for person ID '{person.id}': {e}")
+            raise e
+
+
     def remove_all_posts(self, username: str):
         person = self._get_person(username)
 

@@ -56,7 +56,7 @@ class ImportService:
 
             existing_person.sqlmodel_update(update_data)
 
-            existing_person.processed = False  # Mark for re-processing
+            self.removal_service.remove_profile_analysis(existing_person)
 
             person_to_save = existing_person
         else:
