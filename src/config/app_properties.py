@@ -24,6 +24,12 @@ class AppProperties:
     # Base directory of the application
     BASE_DIR: str = get_base_dir()
 
+    # Log directory of the application
+    LOG_DIR: str = os.path.join(BASE_DIR, "logs")
+
+    # Log file path
+    LOG_FILE_NAME: str = "app.log"
+
     # Directory to store application data
     DATA_DIR: str = os.path.join(BASE_DIR, "data")
 
@@ -31,4 +37,4 @@ class AppProperties:
     CONTENTS_DIR: str = os.path.join(DATA_DIR, "contents")
 
     # Directory to store vector data
-    VECTOR_STORE_DIR = os.path.join("data", "vector_store")
+    VECTOR_STORE_DIR = os.path.join(DATA_DIR, "vector_store")
