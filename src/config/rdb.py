@@ -8,7 +8,7 @@ DATA_DIR = AppProperties.DATA_DIR
 DB_NAME = "iku_database.db"
 DB_URL = f"sqlite:///{DATA_DIR}/{DB_NAME}"
 
-engine = create_engine(DB_URL, echo=True, connect_args={"check_same_thread": False})
+engine = create_engine(DB_URL, echo=False, connect_args={"check_same_thread": False})
 
 
 def get_session():
