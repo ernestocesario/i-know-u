@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from sqlmodel import SQLModel, Field, Relationship
@@ -23,10 +21,10 @@ class Story(SQLModel, table=True):
     # Relationships
     # Many-to-one relationship with Person
     owner_id: int = Field(foreign_key="persons.id")
-    owner: Person = Relationship(back_populates="stories")
+    owner: "Person" = Relationship(back_populates="stories")
 
     # One-to-one relationship with Content
-    content: Content = Relationship(
+    content: "Content" = Relationship(
         back_populates="story",
         sa_relationship_kwargs={
             "uselist": False,

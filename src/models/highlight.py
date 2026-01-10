@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, List
 
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -28,10 +26,10 @@ class Highlight(SQLModel, table=True):
     # Relationships
     # Many-to-one relationship with Person
     owner_id: int = Field(foreign_key="persons.id")
-    owner: Person = Relationship(back_populates="highlights")
+    owner: "Person" = Relationship(back_populates="highlights")
 
     # One-to-many relationship with Content
-    contents: list[Content] = Relationship(
+    contents: List["Content"] = Relationship(
         back_populates="highlight",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )

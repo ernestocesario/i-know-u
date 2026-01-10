@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, List
 from datetime import datetime
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -29,16 +27,16 @@ class Post(SQLModel, table=True):
     # Relationships
     # Many-to-one relationship with Person
     owner_id: int = Field(foreign_key="persons.id")
-    owner: Person = Relationship(back_populates="posts")
+    owner: "Person" = Relationship(back_populates="posts")
 
     # One-to-many relationship with Content
-    contents: list[Content] = Relationship(
+    contents: List["Content"] = Relationship(
         back_populates="post",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
     # One-to-many relationship with Comment
-    comments: list[Comment] = Relationship(
+    comments: List["Comment"] = Relationship(
         back_populates="post",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )

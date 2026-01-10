@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import List, Optional, TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship
 
@@ -30,19 +28,19 @@ class Person(SQLModel, table=True):
 
     # Relationships
     # One-to-many relationship with Post
-    posts: List[Post] = Relationship(
+    posts: List["Post"] = Relationship(
         back_populates="owner",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
     # One-to-many relationship with Highlight
-    highlights: List[Highlight] = Relationship(
+    highlights: List["Highlight"] = Relationship(
         back_populates="owner",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )
 
     # One-to-many relationship with Story
-    stories: List[Story] = Relationship(
+    stories: List["Story"] = Relationship(
         back_populates="owner",
         sa_relationship_kwargs={"cascade": "all, delete-orphan"}
     )

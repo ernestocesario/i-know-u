@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Optional, TYPE_CHECKING
 from datetime import datetime
 from sqlmodel import SQLModel, Field, Relationship
@@ -32,18 +30,18 @@ class Content(SQLModel, table=True):
     # Relationships
     # Many-to-one relationship with Post
     post_id: Optional[int] = Field(default=None, foreign_key="posts.id")
-    post: Optional[Post] = Relationship(back_populates="contents")
+    post: Optional["Post"] = Relationship(back_populates="contents")
 
     # Many-to-one relationship with Highlight
     highlight_id: Optional[int] = Field(default=None, foreign_key="highlights.id")
-    highlight: Optional[Highlight] = Relationship(back_populates="contents")
+    highlight: Optional["Highlight"] = Relationship(back_populates="contents")
 
     # One-to-one relationship with Story
     story_id: Optional[int] = Field(default=None, foreign_key="stories.id", unique=True)
-    story: Optional[Story] = Relationship(back_populates="content")
+    story: Optional["Story"] = Relationship(back_populates="content")
 
     # One-to-one relationship with ContentAnalysis
-    content_analysis: Optional[ContentAnalysis] = Relationship(
+    content_analysis: Optional["ContentAnalysis"] = Relationship(
         back_populates="content",
         sa_relationship_kwargs={
             "uselist": False,
