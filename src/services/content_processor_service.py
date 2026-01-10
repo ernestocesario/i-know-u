@@ -45,6 +45,55 @@ class ContentProcessorService:
     # Public methods
     # *******************************************************
 
+    # Method to check if a person is fully processed (profile, stories, posts, highlights)
+    def is_fully_processed(self, person_id: int) -> bool:
+        """
+        Checks if a Person and all their associated content have been processed.
+        """
+        # 1. Fetch person
+        person = self.person_repository.get_by_id(person_id)
+
+        if not person:
+            self.logger.error(f"Person with ID {person_id} not found.")
+            raise ValueError(f"Person with ID {person_id} not found.")
+
+        # 2. Check person profile info processing status
+        if not person.processed:
+            return False
+
+        # 3. Check person's stories processing status
+        unprocessed_stories = self.story_repository.find(
+            StoryFilter(
+                owner_is=person,
+                processed_is=False
+            )
+        )
+        if unprocessed_stories:
+            return False
+
+        # 4. Check person's posts processing status
+        unprocessed_posts = self.post_repository.find(
+            PostFilter(
+                owner_is=person,
+                processed_is=False
+            )
+        )
+        if unprocessed_posts:
+            return False
+
+        # 5. Check person's highlights processing status
+        unprocessed_highlights = self.highlight_repository.find(
+            HighlightFilter(
+                owner_is=person,
+                processed_is=False
+            )
+        )
+        if unprocessed_highlights:
+            return False
+
+        return True
+
+
     def process_profile_info(self, person_id: int) -> bool:
         """
         Analyzes the Person's raw metadata (Bio, Stats) to create a
