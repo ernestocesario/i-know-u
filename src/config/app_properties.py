@@ -2,6 +2,9 @@ import os
 import sys
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class AppProperties:
 
@@ -18,8 +21,11 @@ class AppProperties:
 
 
     # *******************************************************
-    # Constants methods
+    # Constants
     # *******************************************************
+
+    # App name
+    APP_NAME: str = "I Know U"
 
     # Base directory of the application
     BASE_DIR: str = get_base_dir()
@@ -38,3 +44,6 @@ class AppProperties:
 
     # Directory to store vector data
     VECTOR_STORE_DIR = os.path.join(DATA_DIR, "vector_store")
+
+    # API Keys
+    GOOGLE_AI_API_KEY = os.getenv("GOOGLE_AI_API_KEY")
