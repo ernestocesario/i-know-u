@@ -93,6 +93,7 @@ class ImportService:
             try:
                 # Map PostDTO to Post entity
                 post_entity = InstamineMapper.to_post_entity(post_dto, owner=person)
+                self.session.add(post_entity)
 
                 # Process and store each content
                 for content_dto in post_dto.contents:
@@ -118,7 +119,8 @@ class ImportService:
                         mime_type=content_dto.mime_type
                     )
 
-                self.session.add(post_entity)
+                    self.session.add(content_entity)
+
                 self.session.commit()
 
             except Exception as e:
