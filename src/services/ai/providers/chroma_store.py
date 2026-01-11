@@ -92,7 +92,15 @@ class ChromaVectorStore(BaseVectorStore):
         Clears the entire vector store.
         """
         try:
-            self.vector_store.delete(where={})
+            existing_data = self.vector_store.get()
+            all_ids = existing_data.get('ids', [])
+
+            if all_ids:
+                self.vector_store.delete(ids=all_ids)
+                self.logger.info(f"Deleted {len(all_ids)} documents from vector store.")
+            else:
+                self.logger.info("Vector store is already empty.")
+
         except Exception as e:
             self.logger.error(f"Error clearing the vector store: {e}")
             raise e
