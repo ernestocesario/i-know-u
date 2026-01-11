@@ -43,7 +43,7 @@ def configure_logging(log_dir: str = AppProperties.LOG_DIR, log_filename: str = 
             # Root logger
             '': {
                 'handlers': ['file_handler'],
-                'level': 'WARNING',     # External libs log only WARNING and above
+                'level': 'ERROR',     # External libs log only ERROR and above
                 'propagate': False
             },
 
