@@ -97,6 +97,8 @@ class PeopleCount(str, Enum):
     GROUP = "group"
     NONE = "none"
 
+    UNDEFINED = "undefined"
+
 
 class MainActivity(str, Enum):
     POSING = "posing"

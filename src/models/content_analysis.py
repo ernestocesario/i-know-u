@@ -14,23 +14,23 @@ class ContentAnalysis(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     # Temporal and environmental attributes
-    season: Season = Field(index=True)
-    visual_time_of_day: VisualTimeOfDay = Field(index=True)
-    weather_condition: WeatherCondition = Field(index=True)
-    location_type: LocationType = Field(index=True)
+    season: Season = Field(default=Season.UNDEFINED, index=True)
+    visual_time_of_day: VisualTimeOfDay = Field(default=VisualTimeOfDay.UNDEFINED, index=True)
+    weather_condition: WeatherCondition = Field(default=WeatherCondition.UNDEFINED, index=True)
+    location_type: LocationType = Field(default=LocationType.UNDEFINED, index=True)
 
     # Subject and activity attributes
-    subject_type: SubjectType = Field(index=True)
-    people_count: PeopleCount = Field(index=True)
-    main_activity: MainActivity = Field(index=True)
+    subject_type: SubjectType = Field(default=SubjectType.UNDEFINED, index=True)
+    people_count: PeopleCount = Field(default=PeopleCount.UNDEFINED, index=True)
+    main_activity: MainActivity = Field(default=MainActivity.UNDEFINED, index=True)
 
     # Social and contextual attributes
-    social_context: SocialContext = Field(index=True)
-    content_intention: ContentIntention = Field(index=True)
+    social_context: SocialContext = Field(default=SocialContext.UNDEFINED, index=True)
+    content_intention: ContentIntention = Field(default=ContentIntention.UNDEFINED, index=True)
 
     # Emotional and stylistic attributes
-    mood: Mood = Field(index=True)
-    fashion_style: FashionStyle = Field(index=True)
+    mood: Mood = Field(default=Mood.UNDEFINED, index=True)
+    fashion_style: FashionStyle = Field(default=FashionStyle.UNDEFINED, index=True)
 
 
 
