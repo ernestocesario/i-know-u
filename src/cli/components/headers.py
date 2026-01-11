@@ -1,6 +1,11 @@
 import os
-from rich.panel import Panel
+from typing import Optional
+
+from pyfiglet import Figlet
 from rich.align import Align
+from rich.panel import Panel
+from rich.console import Group
+
 from src.cli.styles import console
 from src.config.app_properties import AppProperties
 
@@ -10,24 +15,38 @@ def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def print_header(subtitle: str = "A powerful AI profile analyzer"):
+def print_header(menu_name: Optional[str] = None):
     """
-    Clears the screen and prints the standard application header.
+    Clears the screen and prints an application header.
     """
     clear_screen()
 
-    title_text = f"[bold cyan]IKU[/bold cyan] [dim]- {AppProperties.APP_NAME}[/dim]"
+    fig = Figlet(font='bloody')
+    title_ascii = fig.renderText(AppProperties.APP_NAME)
 
-    if subtitle:
-        content = f"{title_text}\n[bold white]{subtitle}[/bold white]"
-    else:
-        content = title_text
+    title_text = f"[bold red]{title_ascii}[/bold red]"
+    tagline = f"[dim bold italic]Nothing stays private forever...[/dim bold italic]"
 
-    console.print(
-        Panel(
-            Align.center(content),
-            border_style="blue",
-            padding=(0, 2)
-        )
+    content = Group(
+        Align.center(title_text),
+        Align.center(tagline)
     )
-    console.print("")  # Empty line for spacing
+
+    panel = Panel(
+        content,
+        border_style="red",
+        padding=(1, 2)
+    )
+
+    if menu_name:
+        menu_text = f"[bold yellow]{menu_name}[/bold yellow]"
+        console.print(
+            Group(
+                panel,
+                Align.center(menu_text)
+            )
+        )
+    else:
+        console.print(panel)
+
+    console.print("")
