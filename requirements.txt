@@ -2,8 +2,12 @@ instamine==0.1.0
 langchain_chroma==1.1.0
 langchain_core==1.2.7
 langchain_google_genai==4.1.3
+Markdown==3.10
 protobuf==6.33.3
 pydantic==2.12.5
+pyfiglet==1.0.4
+python-dotenv==1.2.1
 questionary==2.1.1
 rich==14.2.0
 sqlmodel==0.0.31
+weasyprint==67.0
