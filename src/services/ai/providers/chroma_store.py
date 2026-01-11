@@ -62,7 +62,7 @@ class ChromaVectorStore(BaseVectorStore):
         try:
             results = self.vector_store.similarity_search(
                 query=query,
-                filters=filters.build_filter(),
+                filter=filters.build_filter(),
                 k=k,
             )
 
