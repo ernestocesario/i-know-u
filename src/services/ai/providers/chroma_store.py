@@ -72,18 +72,34 @@ class ChromaVectorStore(BaseVectorStore):
             self.logger.error(f"Error during vector search with query '{query}': {e}")
             raise e
 
-
-    def delete(self, person_id: int, object_type: Optional[VectorObjectType] = None) -> None:
+    def delete(self, person_id: Optional[int] = None, object_type: Optional[VectorObjectType] = None) -> None:
+        """
+        Deletes documents from the vector store based on filters.
+        Handles the construction of ChromaDB-compliant '$and' clauses.
+        """
         try:
-            where_filter: Dict[str, Any] = {VectorMetadataKeys.PERSON_ID: person_id}
+            conditions = []
+
+            if person_id is not None:
+                conditions.append({"person_id": person_id})
 
             if object_type:
-                where_filter[VectorMetadataKeys.OBJECT_TYPE] = object_type.value
+                conditions.append({"object_type": object_type.value})
+
+            if not conditions:
+                self.logger.warning("Delete called without filters. Operation skipped.")
+                return
+
+            if len(conditions) == 1:
+                where_filter = conditions[0]
+            else:
+                where_filter = {"$and": conditions}
 
             self.vector_store.delete(where=where_filter)
+            self.logger.info(f"Deleted documents matching: {where_filter}")
 
         except Exception as e:
-            self.logger.error(f"Error deleting vectors for {VectorMetadataKeys.PERSON_ID} '{person_id}' and {VectorMetadataKeys.OBJECT_TYPE} '{object_type}': {e}")
+            self.logger.error(f"Error deleting from vector store: {e}")
             raise e
 
 
