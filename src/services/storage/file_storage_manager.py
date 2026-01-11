@@ -2,7 +2,10 @@ import logging
 import mimetypes
 import os
 import shutil
+from datetime import datetime
 from typing import Optional
+
+import markdown
 
 
 class FileStorageManager:
@@ -67,6 +70,53 @@ class FileStorageManager:
         self._save_file(path, content_id, data, mime_type)
 
 
+    def save_report(self, user_external_id: str, username: str, markdown_content: str) -> str:
+        """
+        Saves the report as Markdown and PDF.
+        Returns the path to the PDF file.
+        """
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        report_dir = self.get_report_dir(user_external_id)
+
+        filename_base = f"Report_{username}_{timestamp}"
+        md_path = os.path.join(report_dir, f"{filename_base}.md")
+        pdf_path = os.path.join(report_dir, f"{filename_base}.pdf")
+
+        # 1. Save Markdown
+        with open(md_path, "w", encoding="utf-8") as f:
+            f.write(markdown_content)
+
+        # 2. Convert to PDF
+        try:
+            import weasyprint
+
+            # Convert MD -> HTML
+            html_body = markdown.markdown(markdown_content)
+
+            # Add some basic CSS for a professional look
+            css_style = """
+                body { font-family: sans-serif; line-height: 1.6; color: #333; }
+                h1 { color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
+                h2 { color: #16a085; margin-top: 20px; }
+                strong { color: #2980b9; }
+                hr { border: 0; border-top: 1px solid #eee; margin: 30px 0; }
+            """
+
+            html_content = f"<html><head><style>{css_style}</style></head><body>{html_body}</body></html>"
+
+            # Generate PDF
+            weasyprint.HTML(string=html_content).write_pdf(pdf_path)
+
+            return pdf_path
+
+        except ImportError:
+            print("Warning: 'weasyprint' not installed. Saving only Markdown.")
+            return md_path
+        except Exception as e:
+            print(f"Warning: PDF generation failed: {e}. Report saved as Markdown only.")
+            return md_path
+
+
     def get_story_filepath(self, user_external_id: str, story_external_id: str) -> str:
         """
         Locates the story file on disk, ignoring the extension.
@@ -94,6 +144,13 @@ class FileStorageManager:
         target_dir = os.path.join(self.base_root, user_external_id, "Highlights", highlight_external_id)
 
         return self._find_file_by_stem(target_dir, content_external_id)
+
+
+    def get_report_dir(self, user_external_id: str) -> str:
+        """Creates and returns the report directory for a user."""
+        path = os.path.join(self.base_root, str(user_external_id), "Reports")
+        os.makedirs(path, exist_ok=True)
+        return path
 
 
     def delete_user_folder(self, user_id: str):

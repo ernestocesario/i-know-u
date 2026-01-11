@@ -1,3 +1,7 @@
+import os
+import platform
+import subprocess
+
 import questionary
 from questionary import Choice
 
@@ -77,8 +81,7 @@ def show_analysis_menu(ctx: CliContext):
             _handle_chat(ctx)
 
         elif choice == "report":
-            print_info("Report generation feature coming soon...")
-            questionary.press_any_key_to_continue().ask()
+            _handle_report(ctx)
 
         elif choice == "remove":
             _handle_remove_profile(ctx)
@@ -148,7 +151,7 @@ def _handle_chat(ctx: CliContext):
     """
     Starts the RAG Chat Loop.
     """
-    print_header(f"CHAT WITH @{ctx.current_username}")
+    print_header(f"CHAT ABOUT @{ctx.current_username}")
     print_info("Type 'exit' or 'quit' to go back.")
 
     while True:
@@ -171,3 +174,32 @@ def _handle_chat(ctx: CliContext):
 
         except Exception as e:
             print_error(f"Error: {e}")
+
+
+def _handle_report(ctx: CliContext):
+    """
+    Generates the PDF report.
+    """
+    print_info(f"Generating comprehensive report for @{ctx.current_username}...")
+    print_info("This involves deep analysis and may take a minute.\n")
+
+    try:
+        with console.status("[bold cyan]Analyzing Personality, Style, and Habits...[/bold cyan]", spinner="earth"):
+
+            report_path = ctx.report_service.generate_report(ctx.current_username)
+
+        print_success(f"Report generated successfully!")
+        console.print(f"Saved at: [underline]{report_path}[/underline]")
+
+        if questionary.confirm("Open report now?").ask():
+            if platform.system() == 'Darwin':  # macOS
+                subprocess.call(('open', report_path))
+            elif platform.system() == 'Windows':    # Windows
+                os.startfile(report_path)
+            else:                                   # linux
+                subprocess.call(('xdg-open', report_path))
+
+        questionary.press_any_key_to_continue().ask()
+
+    except Exception as e:
+        print_error(f"Report generation failed: {e}")

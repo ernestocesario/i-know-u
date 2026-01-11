@@ -10,7 +10,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
 from src.services.ai.interfaces.base_ai_provider import BaseAIProvider
-from src.services.ai.prompts import PromptTemplates
+from src.services.ai.prompts.prompts import PromptTemplates
 
 
 class GeminiProvider(BaseAIProvider):
@@ -197,6 +197,18 @@ class GeminiProvider(BaseAIProvider):
 
         except Exception as e:
             self.logger.error(f"Profile enrichment failed for {username}: {e}")
+            raise e
+
+
+    def generate_raw(self, messages: List[BaseMessage]) -> str:
+        """
+        Direct invocation of the LLM.
+        """
+        try:
+            response = self.llm.invoke(messages)
+            return response.content
+        except Exception as e:
+            self.logger.error(f"Error in generate_raw: {e}")
             raise e
 
 

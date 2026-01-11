@@ -17,6 +17,7 @@ from src.services.content_processor_service import ContentProcessorService
 from src.services.import_service import ImportService
 from src.services.profile_query_service import ProfileQueryService
 from src.services.removal_service import RemovalService
+from src.services.report_service import ReportService
 from src.services.storage.file_storage_manager import FileStorageManager
 
 
@@ -85,6 +86,13 @@ class CliContext:
             session=self.session,
             ai_provider=self.ai_provider,
             vector_store=self.vector_store
+        )
+
+        self.report_service = ReportService(
+            session=self.session,
+            profile_query_service=self.profile_query_service,
+            ai_provider=self.ai_provider,
+            file_manager=self.file_manager
         )
 
 

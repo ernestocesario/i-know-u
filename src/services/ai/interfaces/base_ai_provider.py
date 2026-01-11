@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
+from langchain_core.messages import BaseMessage
+
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
 
 
@@ -43,5 +45,14 @@ class BaseAIProvider(ABC):
     def enrich_profile(self, username: str, full_name: str, bio: str, stats: dict) -> str:
         """
         Generates a narrative profile description based on raw metadata.
+        """
+        pass
+
+
+    @abstractmethod
+    def generate_raw(self, messages: List[BaseMessage]) -> str:
+        """
+        Directly invokes the LLM with a list of messages.
+        Useful for custom tasks like report compilation.
         """
         pass
