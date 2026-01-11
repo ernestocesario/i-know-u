@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Optional
 
 from sqlmodel import Session
 
@@ -237,6 +237,8 @@ class ContentProcessorService:
 
                 content_descriptions: List[str] = []
 
+                post_caption = post.caption if post.caption else None
+
                 # A. Process each content in the post
                 for content in post.contents:
                     # A.1 File path retrieval for post content
@@ -252,13 +254,17 @@ class ContentProcessorService:
                         content=content,
                         content_path=content_path,
                         vector_object_id=content.id,
-                        vector_object_type=VectorObjectType.POST
+                        vector_object_type=VectorObjectType.POST,
+                        caption=post_caption
                     )
 
                     content_descriptions.append(content_description)
 
                 # B. Generate post summary from content descriptions
-                post_inference_summary = self.ai_provider.summarize_collection(content_descriptions)
+                post_inference_summary = self.ai_provider.summarize_collection(
+                    descriptions=content_descriptions,
+                    caption=post_caption
+                )
                 post.inference_summary = post_inference_summary
 
                 summary_doc = VectorDocumentDTO(
@@ -367,7 +373,8 @@ class ContentProcessorService:
             content: Content,
             content_path: str,
             vector_object_id: int,
-            vector_object_type: VectorObjectType
+            vector_object_type: VectorObjectType,
+            caption: Optional[str] = None
     ) -> str:
         # Important because a content can be associated to multiple objects (e.g. multiple stories and multiple highlights)
         if content.processed:
@@ -375,12 +382,14 @@ class ContentProcessorService:
 
         content_inferred_text = self.ai_provider.get_content_description(
             file_path=content_path,
-            mime_type=content.mime_type
+            mime_type=content.mime_type,
+            caption=caption
         )
 
         content_analysis_dto: ContentAnalysisDTO = self.ai_provider.get_content_analysis(
             file_path=content_path,
-            mime_type=content.mime_type
+            mime_type=content.mime_type,
+            caption=caption
         )
 
         # C. Update content and analysis in DB

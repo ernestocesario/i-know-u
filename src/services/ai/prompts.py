@@ -17,6 +17,7 @@ class PromptTemplates:
     3. Visual Details: Colors, clothing, background objects.
     4. Text Transcription: Transcribe any visible text accurately (OCR).
     5. Mood: The emotional atmosphere.
+    6. User Context: If a user caption is provided, use it to disambiguate locations, events, or sentiments, but do not hallucinate details not visible.
 
     Constraint: Output the description in English language.
     Style: Objective, detailed, and concise.
@@ -24,6 +25,9 @@ class PromptTemplates:
 
     # Instruction sent along with the media file
     MEDIA_ANALYSIS_INSTRUCTION = "Analyze this media following the system instructions provided above."
+
+    # New wrapper for caption
+    CAPTION_CONTEXT_INSTRUCTION = "\n\nUSER CAPTION CONTEXT:\nThe user wrote this caption for the media: '{caption}'.\nUse this context to better identify the location, event, or specific objects, but prioritize what is visually present."
 
     # *******************************************************
     # 2. STRUCTURED ANALYSIS (Image/Video -> JSON/DTO)
@@ -39,7 +43,8 @@ class PromptTemplates:
     - Style: Overall Mood, Fashion Style.
     - Subjects: Subject Type, People Count.
 
-    Infer these details based on visual cues (e.g., snow = Winter, dark sky = Night, smiling group = Fun/Social).
+    Infer these details based on visual cues. 
+    If a caption is provided, use it to confirm the 'Context' (e.g. if caption says 'Wedding', Context is 'Ceremony/Party') or 'Mood'.
     """
 
     # *******************************************************
@@ -49,24 +54,27 @@ class PromptTemplates:
     # Used to aggregate multiple content descriptions (children) into a single coherent summary (parent).
     PARENT_SUMMARIZATION_SYSTEM = """
     You are an expert social media analyst.
-    Your task is to create a coherent summary for a Post (Carousel) or Highlight based on the descriptions of its individual contents.
+    Your task is to create a coherent summary for a Post (Carousel) or Highlight based on the descriptions of its individual contents and the original user caption (if available).
 
     Input Data:
-    You will receive a list of descriptions, where each item represents a photo or video belonging to the same collection.
+    - A list of visual descriptions of the media items.
+    - (Optional) The user's original caption.
 
     Instructions:
-    1. Analyze the sequence of descriptions to identify the common theme (e.g., A trip to Japan, A birthday party, A work event).
+    1. Combine the visual evidence with the user's caption to determine the true topic.
     2. Synthesize the individual details into a single narrative paragraph.
-    3. If the contents seem unrelated, describe the variety of topics covered.
-    4. Do not list them as "Image 1, Image 2". Create a flowing story.
+    3. Use the caption to identify specific names, places, or dates that the visual analysis might have missed.
+    4. Do not list items as "Image 1, Image 2". Create a flowing story.
 
     Constraint: Output the summary in English.
     """
 
-    # Wrapper for the bullet-point list
+    # Wrapper for the bullet-point list and caption
     SUMMARIZATION_INSTRUCTION = """
     Here are the descriptions of the contents in this collection:
     {items_descriptions}
+
+    {caption_context}
 
     Please generate the inference summary now.
     """
@@ -91,30 +99,30 @@ class PromptTemplates:
     """
 
     PROFILE_ENRICHMENT_SYSTEM = """
-        You are an expert profiler and biographer.
-        Your task is to analyze the raw metadata of a social media profile and generate a comprehensive, natural language description of the person.
+    You are an expert profiler and biographer.
+    Your task is to analyze the raw metadata of a social media profile and generate a comprehensive, natural language description of the person.
 
-        Input Data:
-        - Username, Full Name, Bio (often contains emojis, abbreviations like 'NY', '25yo', 'MIT').
-        - Statistics (Followers, Following, Posts).
+    Input Data:
+    - Username, Full Name, Bio (often contains emojis, abbreviations like 'NY', '25yo', 'MIT').
+    - Statistics (Followers, Following, Posts).
 
-        Guidelines:
-        1. Decode Context: Interpret abbreviations (e.g., 'M.Sc.' -> Master of Science, 'ITA/ENG' -> Speaks Italian and English).
-        2. Infer Personality: Use the bio tone and stats to infer if they are an influencer, a business, a private person, or a creator.
-        3. Narrative Style: Write a fluid paragraph starting with "This user...". Do not use bullet points.
-        4. Completeness: Integrate the statistics naturally (e.g., "They have a significant following of...").
+    Guidelines:
+    1. Decode Context: Interpret abbreviations (e.g., 'M.Sc.' -> Master of Science, 'ITA/ENG' -> Speaks Italian and English).
+    2. Infer Personality: Use the bio tone and stats to infer if they are an influencer, a business, a private person, or a creator.
+    3. Narrative Style: Write a fluid paragraph starting with "This user...". Do not use bullet points.
+    4. Completeness: Integrate the statistics naturally (e.g., "They have a significant following of...").
 
-        Constraint: Output strictly in English.
-        """
+    Constraint: Output strictly in English.
+    """
 
     PROFILE_ENRICHMENT_USER = """
-        Here is the profile metadata:
-        Username: {username}
-        Full Name: {full_name}
-        Bio: {bio}
-        Followers: {n_followers}
-        Following: {n_following}
-        Posts: {n_posts}
+    Here is the profile metadata:
+    Username: {username}
+    Full Name: {full_name}
+    Bio: {bio}
+    Followers: {n_followers}
+    Following: {n_following}
+    Posts: {n_posts}
 
-        Generate the narrative description now.
-        """
+    Generate the narrative description now.
+    """

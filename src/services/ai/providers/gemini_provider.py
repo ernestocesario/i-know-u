@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from typing import List
+from typing import List, Optional
 
 from google import genai
 from google.genai import types
@@ -37,7 +37,7 @@ class GeminiProvider(BaseAIProvider):
     # Public methods
     # *******************************************************
 
-    def get_content_description(self, file_path: str, mime_type: str) -> str:
+    def get_content_description(self, file_path: str, mime_type: str, caption: Optional[str] = None) -> str:
         """
         Analyzes the content of the given file and returns the inferred text.
         """
@@ -47,30 +47,26 @@ class GeminiProvider(BaseAIProvider):
         google_file = None
 
         try:
-            # Upload file to Google Cloud Storage
             google_file = self._upload_file_to_google(file_path, mime_type)
 
-            # Build the prompt to analyze the file
+            # 1. Prepare Instructions
+            text_instruction = PromptTemplates.MEDIA_ANALYSIS_INSTRUCTION
+
+            # 2. Inject Caption if exists
+            if caption:
+                text_instruction += PromptTemplates.CAPTION_CONTEXT_INSTRUCTION.format(caption=caption)
+
             messages: List[BaseMessage] = [
                 SystemMessage(content=PromptTemplates.VISUAL_ANALYSIS_SYSTEM),
                 HumanMessage(
                     content=[
-                        {
-                            "type": "text",
-                            "text": PromptTemplates.MEDIA_ANALYSIS_INSTRUCTION
-                        },
-                        {
-                            "type": "media",
-                            "file_uri": google_file.uri,
-                            "mime_type": mime_type
-                        }
+                        {"type": "text", "text": text_instruction},
+                        {"type": "media", "file_uri": google_file.uri, "mime_type": mime_type}
                     ]
                 )
             ]
 
-            # Invoke the model
             response = self.llm.invoke(messages)
-
             return response.content
 
         except Exception as e:
@@ -86,7 +82,7 @@ class GeminiProvider(BaseAIProvider):
                     self.logger.warning(f"Error deleting Google file '{google_file.name}': {cleanup_error}")
 
 
-    def get_content_analysis(self, file_path: str, mime_type: str) -> ContentAnalysisDTO:
+    def get_content_analysis(self, file_path: str, mime_type: str, caption: Optional[str] = None) -> ContentAnalysisDTO:
         """
         Analyzes the content of the given file and returns structured metadata (Mood, Season, etc.).
         """
@@ -97,24 +93,21 @@ class GeminiProvider(BaseAIProvider):
         try:
             google_file = self._upload_file_to_google(file_path, mime_type)
 
+            # 1. Prepare Instructions
+            text_instruction = PromptTemplates.STRUCTURED_ANALYSIS_INSTRUCTION
+            if caption:
+                text_instruction += PromptTemplates.CAPTION_CONTEXT_INSTRUCTION.format(caption=caption)
+
             messages: List[BaseMessage] = [
                 HumanMessage(
                     content=[
-                        {
-                            "type": "text",
-                            "text": PromptTemplates.STRUCTURED_ANALYSIS_INSTRUCTION
-                        },
-                        {
-                            "type": "media",
-                            "file_uri": google_file.uri,
-                            "mime_type": mime_type
-                        }
+                        {"type": "text", "text": text_instruction},
+                        {"type": "media", "file_uri": google_file.uri, "mime_type": mime_type}
                     ]
                 )
             ]
 
             content_analysis_dto = self.structured_llm.invoke(messages)
-
             return content_analysis_dto
         except Exception as e:
             self.logger.error(f"Error getting structured analysis from file '{file_path}': {e}")
@@ -151,7 +144,7 @@ class GeminiProvider(BaseAIProvider):
             raise e
 
 
-    def summarize_collection(self, descriptions: List[str]) -> str:
+    def summarize_collection(self, descriptions: List[str], caption: Optional[str] = None) -> str:
         """
         Aggregates multiple contents descriptions into a summary for (Post/Highlight).
         """
@@ -160,8 +153,15 @@ class GeminiProvider(BaseAIProvider):
 
         try:
             bullet_points = "\n".join([f"- {desc}" for desc in descriptions])
+
+            # Prepare optional caption text
+            caption_text = ""
+            if caption:
+                caption_text = f"USER ORIGINAL CAPTION:\n'{caption}'\n"
+
             formatted_instruction = PromptTemplates.SUMMARIZATION_INSTRUCTION.format(
-                items_descriptions=bullet_points
+                items_descriptions=bullet_points,
+                caption_context=caption_text
             )
 
             messages = [
@@ -170,7 +170,6 @@ class GeminiProvider(BaseAIProvider):
             ]
 
             response = self.llm.invoke(messages)
-
             return response.content
         except Exception as e:
             self.logger.error(f"Summarization failed: {e}")
