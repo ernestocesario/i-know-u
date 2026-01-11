@@ -89,9 +89,9 @@ def _handle_import(ctx: CliContext):
     Handles the import flow (Scraping + Processing).
     """
 
-    limit_stories: int = 1
-    limit_posts: int = 1
-    limit_content_per_highlight: int = 1
+    limit_stories: int = 20
+    limit_posts: int = 20
+    limit_content_per_highlight: int = 10
 
     # 1. Import and process profile metadata
     with console.status("[info]Importing profile metadata...", spinner="dots"):

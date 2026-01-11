@@ -6,7 +6,11 @@ from instamine.providers import Provider1, Provider2
 
 from src.config.app_properties import AppProperties
 from src.config.rdb import create_db_and_tables, get_session
+from src.repositories.content_repository import ContentRepository
+from src.repositories.highlight_repository import HighlightRepository
 from src.repositories.person_repository import PersonRepository
+from src.repositories.post_repository import PostRepository
+from src.repositories.story_repository import StoryRepository
 from src.services.ai.providers.chroma_store import ChromaVectorStore
 from src.services.ai.providers.gemini_provider import GeminiProvider
 from src.services.content_processor_service import ContentProcessorService
@@ -86,6 +90,10 @@ class CliContext:
 
         # 4. Repositories
         self.person_repository = PersonRepository(self.session)
+        self.story_repository = StoryRepository(self.session)
+        self.post_repository = PostRepository(self.session)
+        self.highlight_repository = HighlightRepository(self.session)
+        self.content_repository = ContentRepository(self.session)
 
         # 5. CLI State (Volatile state for navigation)
         self.current_username: Optional[str] = None
