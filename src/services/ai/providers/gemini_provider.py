@@ -13,8 +13,8 @@ from src.services.ai.interfaces.base_ai_provider import BaseAIProvider
 from src.services.ai.prompts import PromptTemplates
 
 
-class GemmaProvider(BaseAIProvider):
-    def __init__(self, api_key: str, model_name: str = "gemma-3-27b-it"):
+class GeminiProvider(BaseAIProvider):
+    def __init__(self, api_key: str, model_name: str = "gemini-2.5-flash"):
         self.logger = logging.getLogger(__name__)
 
         if not api_key:

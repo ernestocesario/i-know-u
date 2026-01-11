@@ -258,11 +258,11 @@ class ContentProcessorService:
                     content_descriptions.append(content_description)
 
                 # B. Generate post summary from content descriptions
-                post_inferred_summary = self.ai_provider.summarize_collection(content_descriptions)
-                post.inferred_summary = post_inferred_summary
+                post_inference_summary = self.ai_provider.summarize_collection(content_descriptions)
+                post.inference_summary = post_inference_summary
 
                 summary_doc = VectorDocumentDTO(
-                    text=post_inferred_summary,
+                    text=post_inference_summary,
                     person_id=person.id,
                     object_type=VectorObjectType.POST,
                     object_id=post.id,
@@ -333,11 +333,12 @@ class ContentProcessorService:
                     content_descriptions.append(content_description)
 
                 # B. Generate highlight summary from content descriptions
-                highlight_inferred_summary = self.ai_provider.summarize_collection(content_descriptions)
-                highlight.inferred_summary = highlight_inferred_summary
+                highlight_inference_summary = self.ai_provider.summarize_collection(content_descriptions)
+
+                highlight.inference_summary = highlight_inference_summary
 
                 summary_doc = VectorDocumentDTO(
-                    text=highlight_inferred_summary,
+                    text=highlight_inference_summary,
                     person_id=person.id,
                     object_type=VectorObjectType.HIGHLIGHT,
                     object_id=highlight.id,

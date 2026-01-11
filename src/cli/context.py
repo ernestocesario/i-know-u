@@ -8,7 +8,7 @@ from src.config.app_properties import AppProperties
 from src.config.rdb import create_db_and_tables, get_session
 from src.repositories.person_repository import PersonRepository
 from src.services.ai.providers.chroma_store import ChromaVectorStore
-from src.services.ai.providers.gemma_provider import GemmaProvider
+from src.services.ai.providers.gemini_provider import GeminiProvider
 from src.services.content_processor_service import ContentProcessorService
 from src.services.import_service import ImportService
 from src.services.profile_query_service import ProfileQueryService
@@ -43,7 +43,7 @@ class CliContext:
         self.vector_store = ChromaVectorStore(api_key=AppProperties.GOOGLE_AI_API_KEY)
 
         # AI Provider
-        self.ai_provider = GemmaProvider(api_key=AppProperties.GOOGLE_AI_API_KEY)
+        self.ai_provider = GeminiProvider(api_key=AppProperties.GOOGLE_AI_API_KEY)
 
         # Instamine client
         provider1 = Provider1()
