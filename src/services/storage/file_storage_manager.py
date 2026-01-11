@@ -13,6 +13,7 @@ class FileStorageManager:
         """
 
         self.base_root = base_root
+        os.makedirs(base_root, exist_ok=True)
 
         self.logger = logging.getLogger(__name__)
 
