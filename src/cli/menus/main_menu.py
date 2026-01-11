@@ -1,6 +1,10 @@
 import sys
 import questionary
 from questionary import Choice
+from rich.align import Align
+from rich.console import Group
+from rich.panel import Panel
+from rich.text import Text
 
 from src.cli.context import CliContext
 from src.cli.styles import q_style, print_info, console
@@ -70,8 +74,42 @@ def _handle_analyze_flow(ctx: CliContext):
 
 def _show_about():
     print_header("ABOUT")
-    console.print(
-        "[bold cyan]IKU - I Know U/bold cyan]\n"
-        "An AI-powered tool for social media analysis using RAG and Computer Vision.\n\n"
-        "[dim]Powered by Google Gemma, ChromaDB, and SQLModel.[/dim]\n"
+
+    description = Text(justify="center")
+    description.append("AI-Powered Social Media Profile Analyzer\n\n", style="bold red")
+    description.append("Leveraging LLM technology to expose hidden behavioral patterns and extract undisclosed personal information from publicly available data", style="dim italic white")
+
+    # Separator of 2/3 console width
+    separator_width = int(console.width * 2 / 3)
+    separator = Text("━" * separator_width, style="dim red")
+
+    tech_info = Text(justify="center")
+    tech_info.append("🧠 Psychological Profiling\n", style="bold white")
+    tech_info.append("🎯 Hidden Interest Discovery\n", style="bold white")
+    tech_info.append("🕵️  Behavioral Timeline Reconstruction\n", style="bold white")
+    tech_info.append("👁️  Visual Content Intelligence\n", style="bold white")
+    tech_info.append("🕸️  Social Network Analysis", style="bold white")
+
+    credits_info = Text(justify="center")
+    credits_info.append("Created by ", style="dim italic")
+    credits_info.append("Ernesto Cesario", style="bold cyan")
+    credits_info.append("\n")
+    credits_info.append("🔗 ", style="dim cyan")
+    credits_info.append("github.com/ernestocesario", style="dim cyan link https://github.com/ernestocesario")
+    credits_info.append("\n\n")
+    credits_info.append("© 2026 - For educational purposes only", style="dim italic black on red")
+
+    group = Group(
+        Align.center(description),
+        Text(""),
+        Align.center(separator),
+        Text(""),
+        Align.center(tech_info),
+        Text("\n\n"),
+        Align.center(credits_info)
     )
+
+    console.print(
+            group
+    )
+    console.print("")
