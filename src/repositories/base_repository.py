@@ -1,6 +1,6 @@
 from typing import TypeVar, Generic, List, Optional, Type, Any
 from abc import ABC, abstractmethod
-from sqlmodel import SQLModel, Session, select
+from sqlmodel import SQLModel, Session, select, func
 
 from src.models.DTOs.filters.sql_db.base_filter import BaseFilter
 
@@ -56,6 +56,18 @@ class BaseRepository(Generic[T, F], ABC):
         results = self.session.exec(statement).all()
 
         return list(results)
+
+
+    def count(self, filters: F) -> int:
+        """
+        Returns the number of records matching the given filters.
+        """
+        statement = select(func.count()).select_from(self.model)
+
+        # Apply custom filters
+        statement = self._apply_custom_filters(statement, filters)
+
+        return self.session.exec(statement).one()
 
 
 
