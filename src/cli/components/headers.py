@@ -7,6 +7,7 @@ from rich.panel import Panel
 from rich.console import Group
 
 from src.cli.styles import console
+from src.cli.utils.header_taglines import HeaderTaglines
 from src.config.app_properties import AppProperties
 
 
@@ -25,7 +26,9 @@ def print_header(menu_name: Optional[str] = None):
     title_ascii = fig.renderText(AppProperties.APP_NAME)
 
     title_text = f"[bold red]{title_ascii}[/bold red]"
-    tagline = f"[dim bold italic]Nothing stays private forever...[/dim bold italic]"
+
+    tagline_content = HeaderTaglines.get_random_tagline()
+    tagline = f"[dim bold italic]{tagline_content}[/dim bold italic]"
 
     content = Group(
         Align.center(title_text),
