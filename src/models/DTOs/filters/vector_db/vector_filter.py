@@ -37,8 +37,8 @@ class VectorFilter(BaseModel):
             vector_filter[VectorMetadataKeys.MIME_TYPE] = self.mime_type
 
         # 2. Map Analysis Filters (Dynamic unpacking)
-        if self.content_analysis:
-            analysis_dict = self.content_analysis.model_dump(exclude_none=True)
+        if self.content_analysis_dto:
+            analysis_dict = self.content_analysis_dto.model_dump(exclude_none=True)
 
             for key, value in analysis_dict.items():
                 vector_filter[key] = str(value)
