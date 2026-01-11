@@ -94,8 +94,8 @@ class PromptTemplates:
 
     Instructions:
     - Answer strictly based on the Context Information.
-    - If the answer is not in the context, say "I don't know".
-    - Output Language: English.
+    - Output Language: Detect the language used in the 'User Question' and answer strictly in that same language.
+    - If the answer is not in the context, state that you don't know (translated into the detected language).
     """
 
     PROFILE_ENRICHMENT_SYSTEM = """
