@@ -4,7 +4,7 @@ from sqlmodel import SQLModel, Field, Relationship
 
 
 if TYPE_CHECKING:
-    from . import Content
+    from .content import Content
     from .person import Person
 
 
