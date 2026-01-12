@@ -23,7 +23,7 @@ class ContentRepository(BaseRepository[Content, ContentFilter]):
 
     def get_by_external_id(self, external_id: str) -> Optional[Content]:
         statement = (
-            select(Highlight)
+            select(Content)
             .where(Content.external_id == external_id)
         )
 
