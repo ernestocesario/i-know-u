@@ -1,4 +1,7 @@
-instamine==0.1.0
+# instamine==0.1.0 is not on PyPI; install in editable mode.
+# Ensure the instamine project is located one level above this folder.
+-e ../instamine
+
 langchain_chroma==1.1.0
 langchain_core==1.2.7
 langchain_google_genai==4.1.3
