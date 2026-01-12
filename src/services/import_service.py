@@ -92,7 +92,7 @@ class ImportService:
             # B. Save post
             try:
                 # Map PostDTO to Post entity
-                post_entity = InstamineMapper.to_post_entity(post_dto, owner=person)
+                post_entity = InstamineMapper.to_post_entity(post_dto, owner_id=person.id)
                 self.session.add(post_entity)
 
                 # Process and store each content
@@ -154,7 +154,7 @@ class ImportService:
             # B. Save story
             try:
                 # Map StoryDTO to Story entity
-                story_entity = InstamineMapper.to_story_entity(story_dto, owner=person)
+                story_entity = InstamineMapper.to_story_entity(story_dto, owner_id=person.id)
                 self.session.add(story_entity)
 
                 # Process and store the content
@@ -222,7 +222,7 @@ class ImportService:
                 )
 
                 # B. Map HighlightDTO to Highlight entity
-                tmp_highlight = InstamineMapper.to_highlight_entity(highlight_dto, owner=person)
+                tmp_highlight = InstamineMapper.to_highlight_entity(highlight_dto, owner_id=person.id)
 
                 # C. Check if the highlight already exists, if so, update it, otherwise create new
                 existing_highlight = self.highlight_repository.get_by_external_id(tmp_highlight.external_id)
@@ -234,6 +234,8 @@ class ImportService:
                 else:
                     self.session.add(tmp_highlight)
                     current_highlight = tmp_highlight
+
+                self.session.flush()
 
                 # D. Manage highlight contents
                 for content_dto in highlight_dto.contents:
@@ -250,7 +252,8 @@ class ImportService:
 
                     # Map ContentDTO to Content entity
                     content_entity = InstamineMapper.to_content_entity(content_dto)
-                    content_entity.highlight = current_highlight
+                    content_entity.highlight_id = current_highlight.id
+
 
                     # Save content file
                     content_data = content_dto.read()
@@ -268,7 +271,7 @@ class ImportService:
                 self.session.commit()
 
             except Exception as e:
-                self.logger.error(f"Failed to import highlight '{title}': {e}")
+                self.logger.error(f"Failed to import highlight '{title}': {type(e)}, {e}")
                 self.session.rollback()
                 continue
 
