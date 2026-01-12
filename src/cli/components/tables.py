@@ -36,8 +36,9 @@ def render_profiles_table(ctx: CliContext):
 
     # Define columns
     table.add_column("ID", style="dim", width=4, justify="right")
-    table.add_column("Username", style="bold white")
     table.add_column("Ext. ID", style="dim white")
+    table.add_column("Username", style="bold white")
+    table.add_column("Full name", style="bold white")
     table.add_column("Followers", justify="right")
     table.add_column("Following", justify="right")
     table.add_column("Posts", justify="right")
@@ -59,22 +60,31 @@ def render_profiles_table(ctx: CliContext):
         n_posts = f"{person.n_posts:,}" if person.n_posts else "-"
 
         downloaded_stories = ctx.story_repository.count(
-            StoryFilter()
+            StoryFilter(
+                owner_is=person
+            )
         )
         downloaded_posts = ctx.post_repository.count(
-            PostFilter()
+            PostFilter(
+                owner_is=person
+            )
         )
         downloaded_highlights = ctx.highlight_repository.count(
-            HighlightFilter()
+            HighlightFilter(
+                owner_is=person
+            )
         )
         downloaded_content = ctx.content_repository.count(
-            ContentFilter()
+            ContentFilter(
+                owner_is=person
+            )
         )
 
         table.add_row(
             str(person.id),
-            person.username,
             str(person.external_id),
+            person.username,
+            person.full_name,
             n_followers,
             n_following,
             n_posts,
