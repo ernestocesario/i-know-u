@@ -1,11 +1,11 @@
 from typing import List
-from rich.table import Table
+
 from rich import box
+from rich.table import Table
 
 from src.cli.context import CliContext
-from src.models import Person
 from src.cli.styles import console
-from src.models.DTOs.filters.sql_db.content_filter import ContentFilter
+from src.models import Person
 from src.models.DTOs.filters.sql_db.highlight_filter import HighlightFilter
 from src.models.DTOs.filters.sql_db.person_filter import PersonFilter
 from src.models.DTOs.filters.sql_db.post_filter import PostFilter
@@ -46,7 +46,6 @@ def render_profiles_table(ctx: CliContext):
     table.add_column("Downloaded Stories", justify="right", style="green")
     table.add_column("Downloaded Posts", justify="right", style="green")
     table.add_column("Downloaded Highlights", justify="right", style="green")
-    table.add_column("Downloaded media", justify="right", style="green")
 
     table.add_column("Status", justify="right", style="green")
 
@@ -74,11 +73,6 @@ def render_profiles_table(ctx: CliContext):
                 owner_is=person
             )
         )
-        downloaded_content = ctx.content_repository.count(
-            ContentFilter(
-                owner_is=person
-            )
-        )
 
         table.add_row(
             str(person.id),
@@ -91,7 +85,6 @@ def render_profiles_table(ctx: CliContext):
             str(downloaded_stories),
             str(downloaded_posts),
             str(downloaded_highlights),
-            str(downloaded_content),
             status_icon
         )
 
