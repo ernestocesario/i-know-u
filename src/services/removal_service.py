@@ -73,6 +73,7 @@ class RemovalService:
 
             # Delete all posts in the vector database
             self.vector_store.delete(person_id=person.id, object_type=VectorObjectType.POST)
+            self.vector_store.delete(person_id=person.id, object_type=VectorObjectType.POST_CONTENT)
 
             self.session.commit()
 
@@ -127,6 +128,7 @@ class RemovalService:
 
             # Delete all posts in the vector database
             self.vector_store.delete(person_id=person.id, object_type=VectorObjectType.HIGHLIGHT)
+            self.vector_store.delete(person_id=person.id, object_type=VectorObjectType.HIGHLIGHT_CONTENT)
 
             self.session.commit()
 

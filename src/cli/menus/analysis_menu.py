@@ -8,6 +8,7 @@ from questionary import Choice
 from src.cli.context import CliContext
 from src.cli.styles import q_style, print_success, print_error, print_info, console
 from src.cli.components.headers import print_header
+from src.config.app_properties import AppProperties
 
 
 def show_analysis_menu(ctx: CliContext):
@@ -92,9 +93,9 @@ def _handle_import(ctx: CliContext):
     Handles the import flow (Scraping + Processing).
     """
 
-    limit_stories: int = 30
-    limit_posts: int = 20
-    limit_content_per_highlight: int = 20
+    limit_stories: int = AppProperties.IMPORT_LIMIT_STORIES
+    limit_posts: int = AppProperties.IMPORT_LIMIT_POSTS
+    limit_content_per_highlight: int = AppProperties.IMPORT_LIMIT_CONTENTS_PER_HIGHLIGHT
 
     # 1. Import and process profile metadata
     with console.status("[info]Importing profile metadata...", spinner="dots"):
@@ -166,7 +167,8 @@ def _handle_chat(ctx: CliContext):
                 answer = ctx.profile_query_service.ask_question_about_profile(
                     username=ctx.current_username,
                     question=question,
-                    k=20
+                    k=20,
+                    self_querying_retrieval=True
                 )
 
             console.print(f"[bold cyan]AI:[/bold cyan] {answer}")

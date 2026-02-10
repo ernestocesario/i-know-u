@@ -9,6 +9,7 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
+from src.models.DTOs.query_intent_dto import QueryIntentDTO
 from src.services.ai.interfaces.base_ai_provider import BaseAIProvider
 from src.services.ai.prompts.prompts import PromptTemplates
 
@@ -30,7 +31,8 @@ class GeminiProvider(BaseAIProvider):
             temperature=0.0
         )
 
-        self.structured_llm = self.llm.with_structured_output(ContentAnalysisDTO)
+        self.content_analysis_llm = self.llm.with_structured_output(ContentAnalysisDTO)
+        self.query_intent_llm = self.llm.with_structured_output(QueryIntentDTO)
 
 
     # *******************************************************
@@ -107,7 +109,7 @@ class GeminiProvider(BaseAIProvider):
                 )
             ]
 
-            content_analysis_dto = self.structured_llm.invoke(messages)
+            content_analysis_dto = self.content_analysis_llm.invoke(messages)
             return content_analysis_dto
         except Exception as e:
             self.logger.error(f"Error getting structured analysis from file '{file_path}': {e}")
@@ -118,6 +120,24 @@ class GeminiProvider(BaseAIProvider):
                     self._delete_file_from_google(google_file)
                 except Exception as cleanup_error:
                     self.logger.warning(f"Error deleting Google file '{google_file.name}': {cleanup_error}")
+
+
+    def extract_search_intent(self, question: str) -> QueryIntentDTO:
+        formatted_instruction = PromptTemplates.SEARCH_QUERY_OPTIMIZER_USER_QUESTION.format(
+            question=question
+        )
+
+        messages = [
+            SystemMessage(content=PromptTemplates.SEARCH_QUERY_OPTIMIZER_SYSTEM),
+            HumanMessage(content=formatted_instruction)
+        ]
+
+        try:
+            return self.query_intent_llm.invoke(messages)
+        except Exception as e:
+            self.logger.error(f"Error extracting search intent from question '{question}': {e}")
+
+            return QueryIntentDTO(filters=None)
 
 
     def generate_response(self, context: str, question: str) -> str:

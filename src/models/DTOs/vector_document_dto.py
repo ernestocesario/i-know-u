@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, Dict, Any
 
 from pydantic import BaseModel
@@ -25,7 +26,7 @@ class VectorDocumentDTO(BaseModel):
         """
 
         # 1. Base metadata
-        metadata = {
+        metadata: Dict[str, Any] = {
             VectorMetadataKeys.PERSON_ID: self.person_id,
             VectorMetadataKeys.OBJECT_ID: self.object_id,
             VectorMetadataKeys.OBJECT_TYPE: self.object_type.value,
@@ -40,6 +41,8 @@ class VectorDocumentDTO(BaseModel):
             content_analysis_dict = self.content_analysis_dto.model_dump(exclude_none=True)
 
             for key, value in content_analysis_dict.items():
-                metadata[key] = str(value)
+                if not isinstance(value, Enum):
+                    raise ValueError(f"Expected Enum value for content analysis field '{key}', got {type(value)}")
+                metadata[key] = value.value
 
         return metadata

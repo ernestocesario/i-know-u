@@ -53,7 +53,8 @@ class ReportService:
                 answer = self.profile_query_service.ask_question_about_profile(
                     username=username,
                     question=question,
-                    k=20
+                    k=20,
+                    self_querying_retrieval=False
                 )
                 research_notes.append(f"### FINDINGS FOR '{section_title}':\n{answer}\n")
             except Exception as e:

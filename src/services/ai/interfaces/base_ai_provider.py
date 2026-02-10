@@ -4,6 +4,7 @@ from typing import List, Optional
 from langchain_core.messages import BaseMessage
 
 from src.models.DTOs.content_analysis_dto import ContentAnalysisDTO
+from src.models.DTOs.query_intent_dto import QueryIntentDTO
 
 
 class BaseAIProvider(ABC):
@@ -21,6 +22,16 @@ class BaseAIProvider(ABC):
         """
         Analyzes the image/video and returns structured metadata (Mood, Season, etc.).
         Returns a DTO, not a DB Entity.
+        """
+        pass
+
+
+    @abstractmethod
+    def extract_search_intent(self, question: str) -> QueryIntentDTO:
+        """
+        Analyzes the user's natural language question and extracts:
+        1. A cleaner semantic search query.
+        2. Structured filters (Season, Mood, etc.) to apply to the vector DB.
         """
         pass
 

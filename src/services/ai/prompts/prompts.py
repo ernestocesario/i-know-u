@@ -83,6 +83,48 @@ class PromptTemplates:
     # 4. RAG QA (Context + Question -> Answer)
     # *******************************************************
 
+    SEARCH_QUERY_OPTIMIZER_SYSTEM = """
+    You are an expert Search Filter Extractor.
+    Your ONLY goal is to extract structured filters from the user's question to narrow down a database search.
+
+    ### Rules:
+    1. **Analyze the Question:** Identify specific constraints like Location, Season, Mood, or People Count.
+    2. **Map to Schema:** Map these constraints STRICTLY to the provided `ContentAnalysisDTO` Enum values.
+    3. **NO UNDEFINED:** Never use "UNDEFINED" or "undefined" as a value. If a constraint matches the concept of "undefined" or is not clear, return null/None.
+    4. **Ignore General Intent:** Do NOT try to interpret the semantic meaning of the question (e.g., "Who is he?"). Only look for explicit filtering criteria.
+    5. **Defaults:** If a constraint is not explicitly stated, return null/None for that field.
+
+    ### Examples:
+
+    User: "What does the user do in summer?"
+    Output:
+    {
+      "filters": {"season": "summer"}
+    }
+
+    User: "Is he romantic?"
+    Output:
+    {
+      "filters": {"social_context": "couple_romantic"}
+    }
+    
+    User: "Who is the main user?" (No specific filters like location or season mentioned)
+    Output:
+    {
+      "filters": null
+    }
+
+    User: "Does he like sports?"
+    Output:
+    {
+      "filters": {"main_activity": "sport_exercise"}
+    }
+    """
+
+    SEARCH_QUERY_OPTIMIZER_USER_QUESTION = """
+    User Question: {question}
+    """
+
     RAG_QA_SYSTEM = """
     You are an intelligent assistant named IKU.
 

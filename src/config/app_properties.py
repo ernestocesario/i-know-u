@@ -47,3 +47,7 @@ class AppProperties:
 
     # API Keys
     GOOGLE_AI_API_KEY = os.getenv("GOOGLE_AI_API_KEY")
+
+    IMPORT_LIMIT_STORIES: int = 30
+    IMPORT_LIMIT_POSTS: int = 40
+    IMPORT_LIMIT_CONTENTS_PER_HIGHLIGHT: int = 30

@@ -1,6 +1,7 @@
 import logging
 from typing import List, Dict, Any, Optional
 
+from chromadb import Settings
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -22,18 +23,15 @@ class ChromaVectorStore(BaseVectorStore):
             raise ValueError("Google API Key is missing. Please set GOOGLE_API_KEY environment variable.")
 
         self.embedding_function = GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004",
+            model="models/gemini-embedding-001",
             api_key=SecretStr(api_key),
         )
 
         self.persist_directory = AppProperties.VECTOR_STORE_DIR
 
         # Initialize Chroma
-        self.vector_store = Chroma(
-            collection_name="contents",
-            embedding_function=self.embedding_function,
-            persist_directory=self.persist_directory,
-        )
+        self.vector_store = None
+        self.initialize_vector_store()
 
 
     def add_document(self, document: VectorDocumentDTO) -> None:
@@ -55,14 +53,14 @@ class ChromaVectorStore(BaseVectorStore):
             raise e
 
 
-    def search(self, query: str, filters: Optional[VectorFilter], k: int = 5) -> List[str]:
+    def search(self, query: str, filters: Optional[Dict[str, Any]], k: int = 5) -> List[str]:
         """
         Performs a semantic search on the vector store.
         """
         try:
             results = self.vector_store.similarity_search(
                 query=query,
-                filter=filters.build_filter(),
+                filter=filters,
                 k=k,
             )
 
@@ -105,18 +103,37 @@ class ChromaVectorStore(BaseVectorStore):
 
     def clear_store(self) -> None:
         """
-        Clears the entire vector store.
+        Resets the database AND re-initializes the LangChain wrapper.
         """
         try:
-            existing_data = self.vector_store.get()
-            all_ids = existing_data.get('ids', [])
+            self.logger.info("Resetting Vector Store...")
 
-            if all_ids:
-                self.vector_store.delete(ids=all_ids)
-                self.logger.info(f"Deleted {len(all_ids)} documents from vector store.")
-            else:
-                self.logger.info("Vector store is already empty.")
+            # 1. Reset the underlying ChromaDB collection to clear all data
+            if not self.vector_store._client.reset():
+                raise RuntimeError("Failed to reset the vector store. The collection may be in an inconsistent state.")
+
+            # 2. Re-initialization of the Chroma wrapper to ensure it points to a clean state
+            self.initialize_vector_store()
+
+            self.logger.info("Vector store re-initialized successfully.")
 
         except Exception as e:
-            self.logger.error(f"Error clearing the vector store: {e}")
+            self.logger.error(f"Error resetting vector store: {e}")
             raise e
+
+
+
+    # *******************************************************
+    # Private methods
+    # *******************************************************
+
+    def initialize_vector_store(self) -> None:
+        """
+        Ensures the vector store is initialized and ready for operations.
+        """
+        self.vector_store = Chroma(
+            collection_name="contents",
+            embedding_function=self.embedding_function,
+            persist_directory=self.persist_directory,
+            client_settings=Settings(anonymized_telemetry=False, allow_reset=True)
+        )
