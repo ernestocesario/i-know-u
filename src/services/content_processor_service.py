@@ -576,8 +576,7 @@ class ContentProcessorService:
                 )
 
 
-    def _index_highlight(self, highlight: Highlight,
-                         fresh_dtos_map: Optional[Dict[int, ContentAnalysisDTO]] = None) -> None:
+    def _index_highlight(self, highlight: Highlight, fresh_dtos_map: Optional[Dict[int, ContentAnalysisDTO]] = None) -> None:
         """
         Indexes a Highlight (Summary + All Contents).
         """

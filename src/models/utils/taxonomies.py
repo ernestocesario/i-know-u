@@ -11,14 +11,10 @@ class Season(str, Enum):
     SPRING = "spring"
     FALL = "fall"
 
-    UNDEFINED = "undefined"
-
 
 class VisualTimeOfDay(str, Enum):
     DAY = "day"
     NIGHT = "night"
-
-    UNDEFINED = "undefined"
 
 
 class WeatherCondition(str, Enum):
@@ -26,8 +22,6 @@ class WeatherCondition(str, Enum):
     RAINY = "rainy"
     CLOUDY = "cloudy"
     SNOWY = "snowy"
-
-    UNDEFINED = "undefined"
 
 
 class LocationType(str, Enum):
@@ -67,8 +61,6 @@ class LocationType(str, Enum):
     BOAT_YACHT = "boat_yacht"
     PLANE = "plane"
 
-    UNDEFINED = "undefined"
-
 
 
 # ==========================================
@@ -88,16 +80,12 @@ class SubjectType(str, Enum):
     SCREENSHOT = "screenshot"
     OBJECT_DETAIL = "object_detail"
 
-    UNDEFINED = "undefined"
-
 
 class PeopleCount(str, Enum):
     SOLO = "solo"
     COUPLE = "couple"
     GROUP = "group"
     NONE = "none"
-
-    UNDEFINED = "undefined"
 
 
 class MainActivity(str, Enum):
@@ -113,8 +101,6 @@ class MainActivity(str, Enum):
     SHOPPING = "shopping"
     ATTENDING_EVENT = "attending_event"
     SPEAKING_PRESENTING = "speaking_presenting"
-
-    UNDEFINED = "undefined"
 
 
 
@@ -132,8 +118,6 @@ class SocialContext(str, Enum):
     WORK_COLLEAGUES = "work_colleagues"
     FORMAL_EVENT = "formal_event"
 
-    UNDEFINED = "undefined"
-
 
 class ContentIntention(str, Enum):
     MEMORY_NOSTALGIA = "memory_nostalgia"
@@ -144,8 +128,6 @@ class ContentIntention(str, Enum):
     INFORMATIVE_EDUCATIONAL = "informative_educational"
     PROMOTIONAL_AD = "promotional_ad"
     VENTING_EMOTIONAL = "venting_emotional"
-    
-    UNDEFINED = "undefined"
 
 
 
@@ -166,8 +148,6 @@ class Mood(str, Enum):
     SEDUCTIVE_FLIRTY = "seductive_flirty"
     SILLY_PLAYFUL = "silly_playful"
 
-    UNDEFINED = "undefined"
-
 
 class FashionStyle(str, Enum):
     CASUAL_BASIC = "casual_basic"
@@ -176,9 +156,3 @@ class FashionStyle(str, Enum):
     SPORTY_ATHLETIC = "sporty_athletic"
     VINTAGE_RETRO = "vintage_retro"
     SWIMWEAR = "swimwear"
-    
-    UNDEFINED = "undefined"
-
-
-
-# TODO: implement a guide to help the LLM choose the most appropriate taxonomy labels

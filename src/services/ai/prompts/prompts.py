@@ -90,9 +90,8 @@ class PromptTemplates:
     ### Rules:
     1. **Analyze the Question:** Identify specific constraints like Location, Season, Mood, or People Count.
     2. **Map to Schema:** Map these constraints STRICTLY to the provided `ContentAnalysisDTO` Enum values.
-    3. **NO UNDEFINED:** Never use "UNDEFINED" or "undefined" as a value. If a constraint matches the concept of "undefined" or is not clear, return null/None.
-    4. **Ignore General Intent:** Do NOT try to interpret the semantic meaning of the question (e.g., "Who is he?"). Only look for explicit filtering criteria.
-    5. **Defaults:** If a constraint is not explicitly stated, return null/None for that field.
+    3. **Ignore General Intent:** Do NOT try to interpret the semantic meaning of the question (e.g., "Who is he?"). Only look for explicit filtering criteria.
+    4. **Defaults:** If a constraint is not explicitly stated, return null/None for that field.
 
     ### Examples:
 
@@ -117,7 +116,7 @@ class PromptTemplates:
     User: "Does he like sports?"
     Output:
     {
-      "filters": {"main_activity": "sport_exercise"}
+      "filters": {"main_activity": "training_sport"}
     }
     """
 

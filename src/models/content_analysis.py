@@ -14,23 +14,23 @@ class ContentAnalysis(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
 
     # Temporal and environmental attributes
-    season: Season = Field(default=Season.UNDEFINED, index=True)
-    visual_time_of_day: VisualTimeOfDay = Field(default=VisualTimeOfDay.UNDEFINED, index=True)
-    weather_condition: WeatherCondition = Field(default=WeatherCondition.UNDEFINED, index=True)
-    location_type: LocationType = Field(default=LocationType.UNDEFINED, index=True)
+    season: Optional[Season] = Field(default=None, nullable=True, index=True)
+    visual_time_of_day: Optional[VisualTimeOfDay] = Field(default=None, nullable=True, index=True)
+    weather_condition: Optional[WeatherCondition] = Field(default=None, nullable=True, index=True)
+    location_type: Optional[LocationType] = Field(default=None, nullable=True, index=True)
 
     # Subject and activity attributes
-    subject_type: SubjectType = Field(default=SubjectType.UNDEFINED, index=True)
-    people_count: PeopleCount = Field(default=PeopleCount.UNDEFINED, index=True)
-    main_activity: MainActivity = Field(default=MainActivity.UNDEFINED, index=True)
+    subject_type: Optional[SubjectType] = Field(default=None, nullable=True, index=True)
+    people_count: Optional[PeopleCount] = Field(default=None, nullable=True, index=True)
+    main_activity: Optional[MainActivity] = Field(default=None, nullable=True, index=True)
 
     # Social and contextual attributes
-    social_context: SocialContext = Field(default=SocialContext.UNDEFINED, index=True)
-    content_intention: ContentIntention = Field(default=ContentIntention.UNDEFINED, index=True)
+    social_context: Optional[SocialContext] = Field(default=None, nullable=True, index=True)
+    content_intention: Optional[ContentIntention] = Field(default=None, nullable=True, index=True)
 
     # Emotional and stylistic attributes
-    mood: Mood = Field(default=Mood.UNDEFINED, index=True)
-    fashion_style: FashionStyle = Field(default=FashionStyle.UNDEFINED, index=True)
+    mood: Optional[Mood] = Field(default=None, nullable=True, index=True)
+    fashion_style: Optional[FashionStyle] = Field(default=None, nullable=True, index=True)
 
 
 
