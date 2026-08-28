@@ -69,7 +69,7 @@ class GeminiProvider(BaseAIProvider):
             ]
 
             response = self.llm.invoke(messages)
-            return response.content
+            return response.text
 
         except Exception as e:
             self.logger.error(f"Error analyzing content from file '{file_path}': {e}")
@@ -157,7 +157,7 @@ class GeminiProvider(BaseAIProvider):
 
             response = self.llm.invoke(messages)
 
-            return response.content
+            return response.text
 
         except Exception as e:
             self.logger.error(f"Error generating response for question '{question}': {e}")
@@ -190,7 +190,7 @@ class GeminiProvider(BaseAIProvider):
             ]
 
             response = self.llm.invoke(messages)
-            return response.content
+            return response.text
         except Exception as e:
             self.logger.error(f"Summarization failed: {e}")
             raise e
@@ -213,7 +213,7 @@ class GeminiProvider(BaseAIProvider):
             ]
 
             response = self.llm.invoke(messages)
-            return response.content
+            return response.text
 
         except Exception as e:
             self.logger.error(f"Profile enrichment failed for {username}: {e}")
@@ -226,7 +226,7 @@ class GeminiProvider(BaseAIProvider):
         """
         try:
             response = self.llm.invoke(messages)
-            return response.content
+            return response.text
         except Exception as e:
             self.logger.error(f"Error in generate_raw: {e}")
             raise e
