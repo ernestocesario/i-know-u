@@ -15,19 +15,22 @@ from src.services.ai.prompts.prompts import PromptTemplates
 
 
 class GeminiProvider(BaseAIProvider):
-    def __init__(self, api_key: str, model_name: str = "gemini-2.5-flash"):
+    def __init__(self, google_ai_api_key: str, gemini_model: str):
         self.logger = logging.getLogger(__name__)
 
-        if not api_key:
-            raise ValueError("Google API Key is missing. Please set GOOGLE_API_KEY environment variable.")
+        if not google_ai_api_key:
+            raise ValueError("Google AI API Key is missing.")
+
+        if not gemini_model:
+            raise ValueError("Gemini Model is missing.")
 
         # Native SDK configuration (required for File API uploads)
-        self.client = genai.Client(api_key=api_key)
+        self.client = genai.Client(api_key=google_ai_api_key)
 
         # Langchain configuration
         self.llm = ChatGoogleGenerativeAI(
-            model=model_name,
-            google_api_key=api_key,
+            model=gemini_model,
+            google_api_key=google_ai_api_key,
             temperature=0.0
         )
 

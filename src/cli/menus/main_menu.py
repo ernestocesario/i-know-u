@@ -1,18 +1,17 @@
 import sys
+
 import questionary
 from questionary import Choice
 from rich.align import Align
 from rich.console import Group
-from rich.panel import Panel
 from rich.text import Text
 
-from src.cli.context import CliContext
-from src.cli.styles import q_style, print_info, console
 from src.cli.components.headers import print_header
-
+from src.cli.context import CliContext
 # Import submenus
 from src.cli.menus.analysis_menu import show_analysis_menu
 from src.cli.menus.manage_data_menu import show_manage_data_menu
+from src.cli.styles import q_style, console
 
 
 def show_main_menu(ctx: CliContext):

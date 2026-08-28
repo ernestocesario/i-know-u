@@ -7,27 +7,30 @@ from langchain_core.documents import Document
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from pydantic import SecretStr
 
-from src.config.app_properties import AppProperties
-from src.models.DTOs.filters.vector_db.vector_filter import VectorFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO
 from src.models.utils.vector_object_type import VectorObjectType
-from src.models.utils.vector_metadata_keys import VectorMetadataKeys
 from src.services.ai.interfaces.base_vector_store import BaseVectorStore
 
 
 class ChromaVectorStore(BaseVectorStore):
-    def __init__(self, api_key: str):
+    def __init__(self, google_ai_api_key: str, google_embedding_model: str, persist_directory: str):
         self.logger = logging.getLogger(__name__)
 
-        if not api_key:
-            raise ValueError("Google API Key is missing. Please set GOOGLE_API_KEY environment variable.")
+        if not google_ai_api_key:
+            raise ValueError("Google AI API Key parameter is missing.")
+
+        if not google_embedding_model:
+            raise ValueError("Google Embedding Model parameter is missing.")
+
+        if not persist_directory:
+            raise ValueError("Persist Directory parameter is missing.")
+
+        self.persist_directory = persist_directory
 
         self.embedding_function = GoogleGenerativeAIEmbeddings(
-            model="models/gemini-embedding-001",
-            api_key=SecretStr(api_key),
+            model=google_embedding_model,
+            api_key=SecretStr(google_ai_api_key),
         )
-
-        self.persist_directory = AppProperties.VECTOR_STORE_DIR
 
         # Initialize Chroma
         self.vector_store = None

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional, Dict, Any
 
-from src.models.DTOs.filters.vector_db.vector_filter import VectorFilter
 from src.models.DTOs.vector_document_dto import VectorDocumentDTO
 from src.models.utils.vector_object_type import VectorObjectType
 

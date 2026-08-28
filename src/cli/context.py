@@ -45,10 +45,13 @@ class CliContext:
         self.file_manager = FileStorageManager(base_root=AppProperties.CONTENTS_DIR)
 
         # Vector Store
-        self.vector_store = ChromaVectorStore(api_key=AppProperties.GOOGLE_AI_API_KEY)
+        self.vector_store = ChromaVectorStore(google_ai_api_key=AppProperties.GOOGLE_AI_API_KEY,
+                                              google_embedding_model=AppProperties.EMBEDDING_MODEL,
+                                              persist_directory=AppProperties.VECTOR_STORE_DIR)
 
         # AI Provider
-        self.ai_provider = GeminiProvider(api_key=AppProperties.GOOGLE_AI_API_KEY)
+        self.ai_provider = GeminiProvider(google_ai_api_key=AppProperties.GOOGLE_AI_API_KEY,
+                                          gemini_model=AppProperties.GEMINI_MODEL)
 
         # Instamine client
         provider1 = Provider1()

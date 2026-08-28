@@ -38,6 +38,9 @@ class ProfileQueryService:
         Returns:
             The AI-generated answer based on the retrieved content.
         """
+        if not k or k <= 0:
+            raise ValueError("Parameter 'k' must be a positive integer.")
+
         # 1. Check for self-querying retrieval flag (indicated by "@" prefix)
         if question.startswith("@"):
             self.logger.info("Self-querying retrieval disabled manually via '@' prefix in question.")

@@ -161,13 +161,17 @@ def _handle_chat(ctx: CliContext):
         if not question or question.lower() in ["exit", "quit", "back"]:
             break
 
+        k = AppProperties.K_RAG  # Number of top documents to retrieve
+        if not k or k <= 0:
+            raise ValueError("K_RAG environment variable must be a positive integer.")
+
         try:
             with console.status("Thinking..."):
                 # Call the previously created RAG service
                 answer = ctx.profile_query_service.ask_question_about_profile(
                     username=ctx.current_username,
                     question=question,
-                    k=20,
+                    k=k,
                     self_querying_retrieval=True
                 )
 

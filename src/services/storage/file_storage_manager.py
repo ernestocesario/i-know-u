@@ -3,7 +3,6 @@ import mimetypes
 import os
 import shutil
 from datetime import datetime
-from typing import Optional
 
 import markdown
 

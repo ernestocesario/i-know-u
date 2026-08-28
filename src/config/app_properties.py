@@ -1,10 +1,11 @@
 import os
 import sys
 from pathlib import Path
+from typing import Optional
 
 from dotenv import load_dotenv
-
 load_dotenv()
+
 
 class AppProperties:
 
@@ -17,6 +18,19 @@ class AppProperties:
         if getattr(sys, "frozen", False):
             return os.path.dirname(sys.executable)
         return str(Path(os.path.dirname(os.path.abspath(__file__))).resolve().parent.parent)
+
+
+    @staticmethod
+    def get_env_int(name: str, default: Optional[int] = None) -> Optional[int]:
+        value = os.getenv(name)
+
+        if value is None:
+            return default
+
+        try:
+            return int(value)
+        except ValueError:
+            raise ValueError(f"Environment variable '{name}' must be an integer")
 
 
 
@@ -45,9 +59,18 @@ class AppProperties:
     # Directory to store vector data
     VECTOR_STORE_DIR = os.path.join(DATA_DIR, "vector_store")
 
-    # API Keys
-    GOOGLE_AI_API_KEY = os.getenv("GOOGLE_AI_API_KEY")
 
-    IMPORT_LIMIT_STORIES: int = 30
-    IMPORT_LIMIT_POSTS: int = 40
-    IMPORT_LIMIT_CONTENTS_PER_HIGHLIGHT: int = 30
+
+    # *******************************************************
+    # Env variables
+    # *******************************************************
+
+    GOOGLE_AI_API_KEY: str = os.getenv("GOOGLE_AI_API_KEY", "")
+    GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "")
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "")
+
+    K_RAG: Optional[int] = get_env_int("K_RAG")
+
+    IMPORT_LIMIT_STORIES: Optional[int] = get_env_int("IMPORT_LIMIT_STORIES")
+    IMPORT_LIMIT_POSTS: Optional[int] = get_env_int("IMPORT_LIMIT_POSTS")
+    IMPORT_LIMIT_CONTENTS_PER_HIGHLIGHT: Optional[int] = get_env_int("IMPORT_LIMIT_CONTENTS_PER_HIGHLIGHT")
