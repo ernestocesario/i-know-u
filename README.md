@@ -145,6 +145,11 @@ You need:
 
 ## 🚀 Installation
 
+> ### ⚠️ Warning
+> 
+> InstaMine is not yet publicly available, so the project cannot currently be installed.\
+> To see the project in action, please refer to the [🎥 Demo](#demo) section.
+
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/ernestocesario/i-know-u.git
@@ -201,7 +206,7 @@ The generated dossiers must be treated as AI-generated estimates, never as absol
 
 ### Data Privacy & Legal Constraints
 While the scraped data might be "publicly accessible" on social media, downloading, storing, and systematically analyzing this data on your personal machine to extract private and undisclosed insights raises severe legal and ethical issues.\
-Systematic profiling and the extraction of sensitive personal traits (such as religious beliefs, sexual orientation, or medical status) can strictly violate global privacy frameworks, including the **GDPR** in Europe.\
+Systematic profiling and the extraction of sensitive personal traits (such as religious beliefs, sexual orientation, or medical status) can strictly violate global privacy frameworks, including the **GDPR** in Europe.
 > **Attention:** This project is provided strictly for educational and research purposes to demonstrate data leakage. You are solely responsible for the legal consequences of retaining and processing third-party personal data.
 
 ---
